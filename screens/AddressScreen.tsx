@@ -16,6 +16,8 @@ import * as Location from 'expo-location';
 import { useAddress } from '../context/AddressContext';
 import type { Address, AddressFormData } from '../models/Address';
 
+type LabelTag = 'home' | 'office' | 'other';
+
 const LABEL_ICONS: Record<string, any> = {
   home: 'home',
   office: 'work',
@@ -25,6 +27,20 @@ const LABEL_ICONS: Record<string, any> = {
 
 function getIcon(label: string): any {
   return LABEL_ICONS[label.toLowerCase()] ?? 'place';
+}
+
+/** Map saved label string back to tag + optional custom text for "Other". */
+function parseStoredLabel(stored: string): { tag: LabelTag; otherText: string } {
+  const t = stored.trim().toLowerCase();
+  if (t === 'home') return { tag: 'home', otherText: '' };
+  if (t === 'office' || t === 'work') return { tag: 'office', otherText: '' };
+  return { tag: 'other', otherText: stored.trim() };
+}
+
+function resolveLabel(tag: LabelTag, otherText: string): string {
+  if (tag === 'home') return 'Home';
+  if (tag === 'office') return 'Office';
+  return otherText.trim();
 }
 
 const EMPTY_FORM: AddressFormData = {
@@ -50,16 +66,23 @@ export default function AddressScreen({ navigation }: any) {
   const [mode, setMode] = useState<'list' | 'add' | 'edit'>('list');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<AddressFormData>(EMPTY_FORM);
+  const [labelTag, setLabelTag] = useState<LabelTag>('home');
+  const [otherLabelText, setOtherLabelText] = useState('');
   const [saving, setSaving] = useState(false);
   const [locating, setLocating] = useState(false);
 
   const openAdd = () => {
     setForm(EMPTY_FORM);
+    setLabelTag('home');
+    setOtherLabelText('');
     setEditingId(null);
     setMode('add');
   };
 
   const openEdit = (address: Address) => {
+    const { tag, otherText } = parseStoredLabel(address.label);
+    setLabelTag(tag);
+    setOtherLabelText(otherText);
     setForm({
       label: address.label,
       street: address.street,
@@ -111,16 +134,22 @@ export default function AddressScreen({ navigation }: any) {
   };
 
   const handleSave = async () => {
-    if (!form.label.trim() || !form.street.trim() || !form.city.trim() || !form.zip.trim()) {
+    const resolvedLabel = resolveLabel(labelTag, otherLabelText);
+    if (labelTag === 'other' && !resolvedLabel) {
+      Alert.alert('Missing label', 'Please enter a name for this address.');
+      return;
+    }
+    if (!form.street.trim() || !form.city.trim() || !form.zip.trim()) {
       Alert.alert('Missing fields', 'Please fill in all fields before saving.');
       return;
     }
+    const payload: AddressFormData = { ...form, label: resolvedLabel };
     setSaving(true);
     try {
       if (mode === 'edit' && editingId) {
-        await updateAddress(editingId, form);
+        await updateAddress(editingId, payload);
       } else {
-        await addAddress(form);
+        await addAddress(payload);
       }
       setMode('list');
     } catch {
@@ -275,14 +304,40 @@ export default function AddressScreen({ navigation }: any) {
               <View style={styles.divider} />
             </View>
 
-            <Text style={styles.label}>Label (e.g. Home, Office)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Home"
-              placeholderTextColor="#94a3b8"
-              value={form.label}
-              onChangeText={(v) => setForm((f) => ({ ...f, label: v }))}
-            />
+            <Text style={styles.label}>Label</Text>
+            <View style={styles.labelTagRow}>
+              {(
+                [
+                  { tag: 'home' as const, title: 'Home' },
+                  { tag: 'office' as const, title: 'Office' },
+                  { tag: 'other' as const, title: 'Other' },
+                ] as const
+              ).map(({ tag, title }) => {
+                const selected = labelTag === tag;
+                return (
+                  <TouchableOpacity
+                    key={tag}
+                    style={[styles.labelTag, selected && styles.labelTagSelected]}
+                    onPress={() => setLabelTag(tag)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.labelTagText, selected && styles.labelTagTextSelected]}>{title}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            {labelTag === 'other' ? (
+              <>
+                <Text style={[styles.label, { marginTop: 4 }]}>Custom name</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. Mom's place, Gym"
+                  placeholderTextColor="#94a3b8"
+                  value={otherLabelText}
+                  onChangeText={setOtherLabelText}
+                />
+              </>
+            ) : null}
 
             <Text style={styles.label}>Street Address</Text>
             <TextInput
@@ -429,6 +484,32 @@ const styles = StyleSheet.create({
   divider: { flex: 1, height: 1, backgroundColor: '#e2e8f0' },
   dividerText: { fontSize: 12, color: '#94a3b8', fontWeight: '500' },
   label: { fontSize: 14, fontWeight: '600', color: '#334155', marginBottom: 8 },
+  labelTagRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 20,
+  },
+  labelTag: {
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    borderColor: '#cbd5e1',
+    backgroundColor: '#ffffff',
+  },
+  labelTagSelected: {
+    borderColor: '#006670',
+    backgroundColor: '#e0f2f1',
+  },
+  labelTagText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748b',
+  },
+  labelTagTextSelected: {
+    color: '#006670',
+  },
   input: {
     backgroundColor: '#ffffff',
     borderWidth: 1,

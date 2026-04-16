@@ -2,17 +2,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Address, AddressFormData } from '../models/Address';
 
 const BACKEND_USER_ID_KEY = '@buyer:backendUserId';
+const STORAGE_KEY = '@buyer:addresses';
 
-function getApiBaseUrl(): string {
-  const url = process.env.EXPO_PUBLIC_API_URL?.trim();
-  if (!url) throw new Error('EXPO_PUBLIC_API_URL is not configured.');
-  return url.replace(/\/$/, '');
+/** After a real API failure, stay on device storage until the app process restarts. */
+let remoteAddressApiDown = false;
+
+function generateId(): string {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-async function getUserId(): Promise<string> {
-  const id = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
-  if (!id) throw new Error('User session not found. Please log in again.');
-  return id;
+function getApiBaseUrlOrNull(): string | null {
+  const url = process.env.EXPO_PUBLIC_API_URL?.trim();
+  if (!url) return null;
+  return url.replace(/\/$/, '');
 }
 
 interface BackendAddressDto {
@@ -39,8 +41,8 @@ function mapDto(dto: BackendAddressDto): Address {
   };
 }
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${getApiBaseUrl()}${path}`, {
+async function apiFetch<T>(baseUrl: string, path: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(`${baseUrl}${path}`, {
     ...options,
     headers: {
       Accept: 'application/json',
@@ -58,64 +60,176 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
       const data = JSON.parse(text) as { message?: string | string[] };
       if (typeof data.message === 'string') message = data.message;
       else if (Array.isArray(data.message)) message = data.message.join('. ');
-    } catch { /* use default */ }
+    } catch {
+      /* use default */
+    }
     throw new Error(message);
   }
 
   return JSON.parse(text) as T;
 }
 
+// ——— Local (AsyncStorage) ———
+
+async function localGetAll(): Promise<Address[]> {
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw) as Address[];
+  } catch {
+    return [];
+  }
+}
+
+async function localSaveAll(addresses: Address[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(addresses));
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+async function localCreate(form: AddressFormData, isActive: boolean): Promise<Address> {
+  const addresses = await localGetAll();
+  const newAddress: Address = {
+    ...form,
+    id: generateId(),
+    isActive,
+  };
+  let updated = [...addresses, newAddress];
+  if (newAddress.isActive) {
+    updated = updated.map((a) => ({ ...a, isActive: a.id === newAddress.id }));
+  }
+  await localSaveAll(updated);
+  return newAddress;
+}
+
+async function localUpdate(id: string, patch: Partial<AddressFormData>): Promise<Address> {
+  const addresses = await localGetAll();
+  const idx = addresses.findIndex((a) => a.id === id);
+  if (idx === -1) throw new Error('Address not found');
+  const merged = { ...addresses[idx], ...patch } as Address;
+  const next = addresses.map((a, i) => (i === idx ? merged : a));
+  await localSaveAll(next);
+  return merged;
+}
+
+async function localRemove(id: string): Promise<void> {
+  const addresses = await localGetAll();
+  const wasActive = addresses.find((a) => a.id === id)?.isActive ?? false;
+  const remaining = addresses.filter((a) => a.id !== id);
+  if (wasActive && remaining.length > 0) {
+    remaining[0] = { ...remaining[0], isActive: true };
+  }
+  await localSaveAll(remaining);
+}
+
+async function localActivate(id: string): Promise<Address[]> {
+  const addresses = await localGetAll();
+  const next = addresses.map((a) => ({ ...a, isActive: a.id === id }));
+  await localSaveAll(next);
+  return next;
+}
+
+function canAttemptRemote(): boolean {
+  return !remoteAddressApiDown && getApiBaseUrlOrNull() != null;
+}
+
 /**
- * All address data is persisted against the authenticated user in the backend.
+ * Persists delivery addresses on the backend when `/customers/:id/addresses` exists.
+ * If the API is missing, unreachable, or returns an error, falls back to AsyncStorage
+ * so add / edit / delete still work (same as pre-API behaviour).
  *
- * Required backend endpoints (NestJS):
- *   GET    /customers/:userId/addresses                    → BackendAddressDto[]
- *   POST   /customers/:userId/addresses                    → BackendAddressDto
- *   PATCH  /customers/:userId/addresses/:addressId         → BackendAddressDto
- *   DELETE /customers/:userId/addresses/:addressId         → 204 No Content
- *   PATCH  /customers/:userId/addresses/:addressId/activate → BackendAddressDto[]
- *     (sets the given address as active, deactivates all others for that customer)
+ * Remote endpoints:
+ *   GET    /customers/:userId/addresses
+ *   POST   /customers/:userId/addresses
+ *   PATCH  /customers/:userId/addresses/:addressId
+ *   DELETE /customers/:userId/addresses/:addressId
+ *   PATCH  /customers/:userId/addresses/:addressId/activate
  */
 export class AddressRepository {
   async getAll(): Promise<Address[]> {
-    const userId = await getUserId();
-    const dtos = await apiFetch<BackendAddressDto[]>(`/customers/${userId}/addresses`);
-    return dtos.map(mapDto);
+    const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
+    if (!canAttemptRemote() || !uid) {
+      return localGetAll();
+    }
+    const baseUrl = getApiBaseUrlOrNull()!;
+    try {
+      const dtos = await apiFetch<BackendAddressDto[]>(baseUrl, `/customers/${uid}/addresses`);
+      return dtos.map(mapDto);
+    } catch {
+      remoteAddressApiDown = true;
+      return localGetAll();
+    }
   }
 
   async create(form: AddressFormData, isActive: boolean): Promise<Address> {
-    const userId = await getUserId();
-    const dto = await apiFetch<BackendAddressDto>(`/customers/${userId}/addresses`, {
-      method: 'POST',
-      body: JSON.stringify({ ...form, isActive }),
-    });
-    return mapDto(dto);
+    const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
+    if (!canAttemptRemote() || !uid) {
+      return localCreate(form, isActive);
+    }
+    const baseUrl = getApiBaseUrlOrNull()!;
+    try {
+      const dto = await apiFetch<BackendAddressDto>(baseUrl, `/customers/${uid}/addresses`, {
+        method: 'POST',
+        body: JSON.stringify({ ...form, isActive }),
+      });
+      return mapDto(dto);
+    } catch {
+      remoteAddressApiDown = true;
+      return localCreate(form, isActive);
+    }
   }
 
   async update(id: string, patch: Partial<AddressFormData>): Promise<Address> {
-    const userId = await getUserId();
-    const dto = await apiFetch<BackendAddressDto>(`/customers/${userId}/addresses/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(patch),
-    });
-    return mapDto(dto);
+    const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
+    if (!canAttemptRemote() || !uid) {
+      return localUpdate(id, patch);
+    }
+    const baseUrl = getApiBaseUrlOrNull()!;
+    try {
+      const dto = await apiFetch<BackendAddressDto>(baseUrl, `/customers/${uid}/addresses/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(patch),
+      });
+      return mapDto(dto);
+    } catch {
+      remoteAddressApiDown = true;
+      return localUpdate(id, patch);
+    }
   }
 
   async remove(id: string): Promise<void> {
-    const userId = await getUserId();
-    await apiFetch<void>(`/customers/${userId}/addresses/${id}`, { method: 'DELETE' });
+    const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
+    if (!canAttemptRemote() || !uid) {
+      await localRemove(id);
+      return;
+    }
+    const baseUrl = getApiBaseUrlOrNull()!;
+    try {
+      await apiFetch<void>(baseUrl, `/customers/${uid}/addresses/${id}`, { method: 'DELETE' });
+    } catch {
+      remoteAddressApiDown = true;
+      await localRemove(id);
+    }
   }
 
-  /**
-   * Sets one address as active and deactivates all others for this customer.
-   * Returns the full updated list.
-   */
   async activate(id: string): Promise<Address[]> {
-    const userId = await getUserId();
-    const dtos = await apiFetch<BackendAddressDto[]>(
-      `/customers/${userId}/addresses/${id}/activate`,
-      { method: 'PATCH' },
-    );
-    return dtos.map(mapDto);
+    const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
+    if (!canAttemptRemote() || !uid) {
+      return localActivate(id);
+    }
+    const baseUrl = getApiBaseUrlOrNull()!;
+    try {
+      const dtos = await apiFetch<BackendAddressDto[]>(
+        baseUrl,
+        `/customers/${uid}/addresses/${id}/activate`,
+        { method: 'PATCH' },
+      );
+      return dtos.map(mapDto);
+    } catch {
+      remoteAddressApiDown = true;
+      return localActivate(id);
+    }
   }
 }

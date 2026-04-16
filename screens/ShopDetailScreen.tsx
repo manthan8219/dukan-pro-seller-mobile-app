@@ -25,6 +25,8 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
+import { fetchShopProducts, type UiShopProduct } from '../utils/shopProductsApi';
+
 const { width } = Dimensions.get('window');
 
 const colors = {
@@ -47,45 +49,7 @@ const colors = {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-// ─── Backend DTO ───────────────────────────────────────────────────────────
-interface BackendProduct {
-  id: string;
-  productId: string;
-  shopId: string;
-  quantity: number;
-  unit: string;
-  priceMinor: number;
-  isListed: boolean;
-  displayImageUrl: string;
-  productName: string;
-  productCategory: string | null;
-  listingNotes: string | null;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  desc: string;
-  price: number;
-  image: string;
-  category: string;
-}
-
-function mapProduct(dto: BackendProduct): Product {
-  const parts = [dto.productCategory, dto.unit].filter(Boolean);
-  return {
-    id: dto.productId,
-    name: dto.productName,
-    desc: parts.join(' · '),
-    price: dto.priceMinor / 100,
-    image: dto.displayImageUrl ?? '',
-    category: dto.productCategory ?? 'Other',
-  };
-}
-
-function getApiBaseUrl(): string {
-  return (process.env.EXPO_PUBLIC_API_URL ?? '').replace(/\/$/, '');
-}
+type Product = UiShopProduct;
 
 // ─── Skeleton product card ─────────────────────────────────────────────────
 const SkeletonProductCard = () => {
@@ -211,21 +175,16 @@ export default function ShopDetailScreen({ navigation, route }: any) {
     setLoading(true);
     setError(null);
 
-    fetch(`${getApiBaseUrl()}/shops/${shopId}/products?listedOnly=true`, {
-      headers: { Accept: 'application/json' },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error(`API error ${res.status}`);
-        return res.json() as Promise<BackendProduct[]>;
-      })
-      .then((dtos) => {
+    fetchShopProducts(shopId)
+      .then(({ products, error: fetchErr }) => {
         if (cancelled) return;
-        setProducts(dtos.map(mapProduct));
+        setProducts(products);
+        setError(fetchErr);
         setLoading(false);
       })
-      .catch((err: unknown) => {
+      .catch(() => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Failed to load products.');
+        setError('Failed to load products.');
         setLoading(false);
       });
 

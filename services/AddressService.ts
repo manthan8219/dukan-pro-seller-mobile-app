@@ -3,8 +3,7 @@ import type { Address, AddressFormData } from '../models/Address';
 
 /**
  * Business logic for delivery address management.
- * All state is owned by the backend; each mutating operation calls the API
- * then returns a fresh list so the context always reflects server state.
+ * Uses AddressRepository (API when available, otherwise AsyncStorage fallback).
  */
 export class AddressService {
   constructor(private repo: AddressRepository = new AddressRepository()) {}

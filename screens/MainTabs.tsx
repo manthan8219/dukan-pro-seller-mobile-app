@@ -61,14 +61,20 @@ const CustomTopBar = ({ route }: any) => {
     <SafeAreaView edges={['top']} style={styles.headerWrapper}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.headerLeft} onPress={() => navigation.navigate('Address')}>
-          <MaterialIcons name="location-on" size={24} color={colors.teal700} />
+          <MaterialIcons name="location-on" size={24} color={colors.teal700} style={styles.headerIconFixed} />
           <View style={styles.headerLocationText}>
-            <Text style={styles.locationSubtitle}>YOUR LOCATION</Text>
-            <Text style={styles.locationTitle} numberOfLines={1}>
+            <Text style={styles.locationSubtitle} numberOfLines={1}>
+              YOUR LOCATION
+            </Text>
+            <Text
+              style={styles.locationTitle}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {locationLabel}
             </Text>
           </View>
-          <MaterialIcons name="keyboard-arrow-down" size={18} color={colors.teal700} />
+          <MaterialIcons name="keyboard-arrow-down" size={18} color={colors.teal700} style={styles.headerIconFixed} />
         </TouchableOpacity>
         <View style={styles.headerRight}>
           <Pressable style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
@@ -193,9 +199,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     flex: 1,
-    maxWidth: '65%',
+    minWidth: 0,
+    marginRight: 8,
+  },
+  headerIconFixed: {
+    flexShrink: 0,
   },
   headerLocationText: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: 'column',
   },
   locationSubtitle: {
@@ -209,6 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#181c23',
+    maxWidth: '100%',
   },
   headerTitle: {
     fontSize: 20,
@@ -220,6 +233,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
+    flexShrink: 0,
   },
   iconButton: {
     padding: 8,

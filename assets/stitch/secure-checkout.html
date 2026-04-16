@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout - GroceryCurator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#75d5e2",
+                    "on-primary-fixed-variant": "#004f56",
+                    "primary-container": "#00818d",
+                    "surface-tint": "#006972",
+                    "primary": "#006670",
+                    "on-background": "#181c23",
+                    "surface-container-high": "#e6e8f3",
+                    "inverse-on-surface": "#eef0fb",
+                    "inverse-primary": "#75d5e2",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#fffbff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#414754",
+                    "secondary-fixed-dim": "#ffb778",
+                    "secondary-fixed": "#ffdcc1",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary": "#755700",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#f6feff",
+                    "primary-fixed": "#92f1fe",
+                    "surface": "#f9f9ff",
+                    "surface-dim": "#d7d9e5",
+                    "outline-variant": "#c1c6d7",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#6c3a00",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e0e2ed",
+                    "secondary": "#8e4e00",
+                    "on-tertiary-fixed-variant": "#5b4300",
+                    "surface-container-low": "#f1f3fe",
+                    "inverse-surface": "#2d3039",
+                    "tertiary-fixed-dim": "#fabd00",
+                    "secondary-container": "#fd9000",
+                    "on-tertiary-fixed": "#261a00",
+                    "tertiary-container": "#946f00",
+                    "on-surface": "#181c23",
+                    "outline": "#717786",
+                    "on-secondary-container": "#613400",
+                    "tertiary-fixed": "#ffdf9e",
+                    "on-primary-fixed": "#001f23",
+                    "background": "#f9f9ff",
+                    "surface-variant": "#e0e2ed",
+                    "on-secondary-fixed": "#2e1500",
+                    "surface-container": "#ebedf9",
+                    "surface-bright": "#f9f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9ff; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9ff]/80 dark:bg-[#181c23]/80 backdrop-blur-md flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 duration-200 hover:bg-[#f1f3fe] dark:hover:bg-[#2a2d35] p-2 rounded-full text-[#006670] dark:text-[#00818d]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Plus_Jakarta_Sans'] tracking-tight font-bold text-xl text-[#006670] dark:text-[#00818d]">Checkout</h1>
+</div>
+<button class="active:scale-95 duration-200 hover:bg-[#f1f3fe] dark:hover:bg-[#2a2d35] p-2 rounded-full text-[#006670] dark:text-[#00818d]">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+</button>
+</header>
+<main class="pt-20 pb-32 px-4 max-w-4xl mx-auto space-y-8">
+<!-- Delivery Progress Indicator (Subtle Header) -->
+<div class="px-2">
+<p class="text-label-sm font-medium text-outline uppercase tracking-widest mb-2">Checkout Process</p>
+<div class="flex gap-2 items-center">
+<div class="h-1.5 flex-1 bg-primary rounded-full"></div>
+<div class="h-1.5 flex-1 bg-primary rounded-full"></div>
+<div class="h-1.5 flex-1 bg-surface-container-high rounded-full"></div>
+</div>
+</div>
+<!-- Section: Delivery Address -->
+<section>
+<div class="flex justify-between items-end mb-4 px-2">
+<h2 class="text-headline-sm font-bold text-on-surface tracking-tight">Delivery Address</h2>
+<button class="text-primary font-semibold text-sm hover:underline">Add New</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Home Address -->
+<div class="group relative bg-surface-container-lowest p-5 rounded-xl border-2 border-primary ring-offset-2 transition-all">
+<div class="flex justify-between items-start mb-3">
+<div class="bg-primary/10 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-tighter bg-primary text-on-primary px-2 py-0.5 rounded-full">Selected</span>
+</div>
+<h3 class="font-bold text-on-surface mb-1">Home</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">452 Azure Heights, West Wing, Sky Garden District, Bangalore - 560001</p>
+<p class="text-xs text-outline mt-3 font-medium">+91 98765 43210</p>
+</div>
+<!-- Office Address -->
+<div class="group bg-surface-container-low p-5 rounded-xl border border-transparent hover:border-outline-variant/30 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<div class="bg-surface-container-highest p-2 rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="work">work</span>
+</div>
+</div>
+<h3 class="font-bold text-on-surface mb-1">Office</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Tech Park One, Block C, Level 4, Outer Ring Road, Bangalore - 560103</p>
+<p class="text-xs text-outline mt-3 font-medium">+91 98765 43210</p>
+</div>
+</div>
+</section>
+<!-- Section: Delivery Slots (Bento-style horizontal scroll) -->
+<section>
+<div class="px-2 mb-4">
+<h2 class="text-headline-sm font-bold text-on-surface tracking-tight">Delivery Slot</h2>
+<p class="text-sm text-on-surface-variant">Choose your preferred time for arrival</p>
+</div>
+<div class="flex overflow-x-auto gap-3 pb-4 hide-scrollbar px-2">
+<!-- Slot 1 -->
+<div class="flex-none w-36 bg-surface-container-lowest p-4 rounded-xl border border-primary/20 flex flex-col items-center gap-2 cursor-pointer shadow-sm">
+<span class="text-xs font-bold text-primary bg-primary/5 px-3 py-1 rounded-full">Today</span>
+<span class="text-sm font-semibold text-on-surface">10 AM - 12 PM</span>
+<span class="text-[10px] text-on-surface-variant">Available</span>
+</div>
+<!-- Slot 2 (Selected) -->
+<div class="flex-none w-36 bg-primary p-4 rounded-xl flex flex-col items-center gap-2 cursor-pointer shadow-lg transform scale-105 ring-4 ring-primary/10">
+<span class="text-xs font-bold text-on-primary/80 bg-on-primary/10 px-3 py-1 rounded-full">Today</span>
+<span class="text-sm font-bold text-on-primary">2 PM - 4 PM</span>
+<span class="text-[10px] text-on-primary/70">Fast Delivery</span>
+</div>
+<!-- Slot 3 -->
+<div class="flex-none w-36 bg-surface-container-low p-4 rounded-xl flex flex-col items-center gap-2 cursor-pointer opacity-70">
+<span class="text-xs font-bold text-on-surface-variant bg-surface-container-highest px-3 py-1 rounded-full">Today</span>
+<span class="text-sm font-semibold text-on-surface">6 PM - 8 PM</span>
+<span class="text-[10px] text-on-surface-variant">Available</span>
+</div>
+<!-- Slot 4 -->
+<div class="flex-none w-36 bg-surface-container-low p-4 rounded-xl flex flex-col items-center gap-2 cursor-pointer opacity-70">
+<span class="text-xs font-bold text-on-surface-variant bg-surface-container-highest px-3 py-1 rounded-full">Tomorrow</span>
+<span class="text-sm font-semibold text-on-surface">8 AM - 10 AM</span>
+<span class="text-[10px] text-on-surface-variant">Next Day</span>
+</div>
+</div>
+</section>
+<!-- Section: Payment Methods -->
+<section>
+<div class="px-2 mb-4">
+<h2 class="text-headline-sm font-bold text-on-surface tracking-tight">Payment Method</h2>
+</div>
+<div class="space-y-3">
+<!-- UPI -->
+<label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/20 cursor-pointer hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-secondary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">UPI (Google Pay / PhonePe)</p>
+<p class="text-xs text-on-surface-variant">Instant &amp; secure payments</p>
+</div>
+</div>
+<input checked="" class="w-5 h-5 text-primary border-outline-variant focus:ring-primary" name="payment" type="radio"/>
+</label>
+<!-- Cards -->
+<label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/20 cursor-pointer hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="credit_card">credit_card</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Credit / Debit Card</p>
+<p class="text-xs text-on-surface-variant">Visa, Mastercard, RuPay</p>
+</div>
+</div>
+<input class="w-5 h-5 text-primary border-outline-variant focus:ring-primary" name="payment" type="radio"/>
+</label>
+<!-- COD -->
+<label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/20 cursor-pointer hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-tertiary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-tertiary" data-icon="payments">payments</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Cash on Delivery</p>
+<p class="text-xs text-on-surface-variant">Pay when your items arrive</p>
+</div>
+</div>
+<input class="w-5 h-5 text-primary border-outline-variant focus:ring-primary" name="payment" type="radio"/>
+</label>
+</div>
+</section>
+<!-- Order Summary Card (Asymmetric Layout) -->
+<section class="relative mt-12 mb-8">
+<div class="absolute -top-6 left-6 z-10 bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-bold text-sm tracking-wide">
+                Order Summary
+            </div>
+<div class="bg-surface-container-lowest rounded-2xl p-8 pt-10 shadow-[0px_12px_32px_rgba(24,28,35,0.06)] border border-outline-variant/10">
+<div class="flex justify-between items-center py-2">
+<span class="text-on-surface-variant">Items Subtotal (8)</span>
+<span class="font-bold text-on-surface">₹1,240.00</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<span class="text-on-surface-variant">Delivery Fee</span>
+<span class="font-bold text-primary">FREE</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<div class="flex items-center gap-1">
+<span class="text-on-surface-variant">Packaging Charges</span>
+<span class="material-symbols-outlined text-xs text-outline" data-icon="info">info</span>
+</div>
+<span class="font-bold text-on-surface">₹20.00</span>
+</div>
+<div class="h-[1px] bg-surface-container-high my-4"></div>
+<div class="flex justify-between items-end">
+<div>
+<p class="text-label-sm font-medium text-outline uppercase tracking-wider">Total Amount</p>
+<p class="text-2xl font-extrabold text-on-surface">₹1,260.00</p>
+</div>
+<div class="text-right">
+<p class="text-xs text-secondary font-bold flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="savings" style="font-variation-settings: 'FILL' 1;">savings</span>
+                            Saved ₹145 today
+                        </p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action Shell -->
+<footer class="fixed bottom-0 left-0 w-full bg-[#f9f9ff]/90 backdrop-blur-xl px-6 pt-4 pb-8 border-t border-[#c1c6d7]/15 z-[60]">
+<div class="max-w-4xl mx-auto flex items-center justify-between gap-6">
+<div class="hidden md:block">
+<p class="text-xs font-bold text-outline uppercase tracking-tighter">Selected Payment</p>
+<p class="font-bold text-primary flex items-center gap-1">
+                    UPI Wallet 
+                    <span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</p>
+</div>
+<button class="flex-1 bg-primary text-on-primary font-bold py-4 px-8 rounded-full flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span>Place Order • ₹1,260.00</span>
+</button>
+</div>
+</footer>
+<!-- Image for Context (Decorative/Atmospheric) -->
+<div class="fixed top-0 right-0 -z-10 w-1/3 h-full overflow-hidden opacity-10 pointer-events-none hidden lg:block">
+<img alt="Fresh organic vegetables in a wooden crate with warm sunlight and soft shadows" class="w-full h-full object-cover" data-alt="Close-up of fresh organic bell peppers and leafy greens in a rustic crate with warm atmospheric lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIfUaT11Jozh7hwP3dKJXiupj-YMKFE3XM2irfLM6LYy6O1W9V2cEUHId_Wl_m3GaiQthhpcASr6JddQB03-3ekRE_6EpCXMJV_b0mAiog8Mb2-O0A9xeJoTOgJi3ZAPGCwVnl3bV3pU0--I3s-ltfKAtIcsO-2Axd6Y0RNLXoKKej-tvJNa5-K80Pmg6XFrcWkHwyQJnuNtzNkpPp0LIuOE3lHUThPElq5PKoPV7AZLMFPF6L9tC6uOHYnFncymzS-Q8pnDfUsIh4"/>
+</div>
+</body></html>

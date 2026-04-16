@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Radiant Market - Local Kirana &amp; Groceries</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#75d5e2",
+                        "on-background": "#181c23",
+                        "tertiary-fixed-dim": "#fabd00",
+                        "on-tertiary-fixed-variant": "#5b4300",
+                        "primary-container": "#00818d",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001f23",
+                        "background": "#f9f9ff",
+                        "on-primary-fixed-variant": "#004f56",
+                        "tertiary-fixed": "#ffdf9e",
+                        "outline": "#717786",
+                        "primary": "#006670",
+                        "outline-variant": "#c1c6d7",
+                        "inverse-on-surface": "#eef0fb",
+                        "secondary-fixed": "#ffdcc1",
+                        "on-secondary-fixed-variant": "#6c3a00",
+                        "primary-fixed": "#92f1fe",
+                        "surface-container-high": "#e6e8f3",
+                        "secondary": "#8e4e00",
+                        "secondary-container": "#fd9000",
+                        "on-secondary-fixed": "#2e1500",
+                        "surface-container-highest": "#e0e2ed",
+                        "on-surface": "#181c23",
+                        "surface-tint": "#006972",
+                        "surface": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#ebedf9",
+                        "on-tertiary-fixed": "#261a00",
+                        "surface-variant": "#e0e2ed",
+                        "on-secondary-container": "#613400",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-low": "#f1f3fe",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#f6feff",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d7d9e5",
+                        "tertiary": "#755700",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed-dim": "#ffb778",
+                        "on-surface-variant": "#414754",
+                        "inverse-primary": "#75d5e2",
+                        "inverse-surface": "#2d3039",
+                        "tertiary-container": "#946f00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-teal-700" data-icon="location_on">location_on</span>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-500">Your Location</span>
+<span class="text-sm font-semibold text-on-surface">123 Main St, New York</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-100/50 transition-colors">
+<span class="material-symbols-outlined text-teal-700" data-icon="search">search</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-fixed-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed text-sm" data-icon="person">person</span>
+</div>
+</div>
+</header>
+<main class="pt-20 px-6 max-w-5xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-10">
+<div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary-container p-8 text-white">
+<div class="relative z-10 max-w-xs">
+<h1 class="font-headline text-3xl font-extrabold tracking-tight mb-3">Fresh pantry essentials at your door.</h1>
+<p class="text-on-primary-container opacity-90 text-sm mb-6 leading-relaxed">Discover local Kirana stores for your daily pulses, oils, and fresh farm produce.</p>
+<button class="bg-secondary-container text-on-secondary-container font-semibold py-3 px-6 rounded-full text-sm shadow-lg active:scale-95 transition-transform">
+                    Shop Local Kirana
+                </button>
+</div>
+<div class="absolute -right-8 -bottom-8 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
+<span class="material-symbols-outlined text-[120px]" data-icon="shopping_basket">shopping_basket</span>
+</div>
+</div>
+</section>
+<!-- Categories Section -->
+<section class="mb-10">
+<div class="flex items-baseline justify-between mb-6">
+<h2 class="font-headline text-xl font-bold tracking-tight text-on-surface">Pantry Categories</h2>
+<button class="text-sm font-semibold text-primary">View All</button>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar -mx-6 px-6">
+<!-- Category Items -->
+<div class="flex-shrink-0 flex flex-col items-center gap-2 group">
+<div class="w-16 h-16 rounded-2xl bg-secondary-fixed flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-on-secondary-fixed" data-icon="oil_barrel">oil_barrel</span>
+</div>
+<span class="text-xs font-medium">Oil &amp; Ghee</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2 group">
+<div class="w-16 h-16 rounded-2xl bg-primary-fixed flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="grass">grass</span>
+</div>
+<span class="text-xs font-medium">Pulses &amp; Dal</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2 group">
+<div class="w-16 h-16 rounded-2xl bg-tertiary-fixed flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-on-tertiary-fixed" data-icon="ulna_radius">ulna_radius</span>
+</div>
+<span class="text-xs font-medium">Spices</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2 group">
+<div class="w-16 h-16 rounded-2xl bg-error-container flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-on-error-container" data-icon="bakery_dining">bakery_dining</span>
+</div>
+<span class="text-xs font-medium">Flours</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2 group">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_horiz">more_horiz</span>
+</div>
+<span class="text-xs font-medium">More</span>
+</div>
+</div>
+</section>
+<!-- Nearby Kirana Shops Section -->
+<section class="mb-10">
+<div class="flex items-baseline justify-between mb-6">
+<h2 class="font-headline text-xl font-bold tracking-tight text-on-surface">Nearby Kirana Stores</h2>
+<div class="flex gap-2">
+<span class="text-xs font-medium text-slate-500 bg-surface-container px-3 py-1 rounded-full">Open Now</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Shop Card 1 -->
+<div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="h-48 relative">
+<img alt="Traditional Kirana Store" class="w-full h-full object-cover" data-alt="Traditional local Indian kirana store with bags of grains and spices neatly stacked" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_uBOrq2SVmJB_WSkfEhVVj9Y-QXXsngXzFFbrZxiryMsl-tWbzj9fml3ZVvw37d3adqogr_2xO9J70NJ6GrbTdfw9mKXKy2OlLBA13ZRNvV_dK7xvqbL2NcQPZBgtQb62hOnBc5iQgYPXEJmMvEsa8ZKu5CzqyRqKNDw5w-xLBfujKvkHCAqS6lMDxoaYnbijMuW4HRUrtPC2fLePWhDCC5BC1pT1pwouVTVAbg0FjOPI9SZEEcoErFSZ0S_9OyuJOy7XbxeWqMdq"/>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.8</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Krishna Kirana Store</h3>
+<p class="text-xs font-medium text-primary">Daily Essentials &amp; Grains</p>
+</div>
+<span class="text-xs font-medium text-slate-500">0.3 km away</span>
+</div>
+<div class="flex gap-2 mt-4">
+<span class="text-[10px] font-bold uppercase tracking-tight bg-surface-container-low px-2 py-1 rounded">Pure Ghee</span>
+<span class="text-[10px] font-bold uppercase tracking-tight bg-surface-container-low px-2 py-1 rounded">Loose Spices</span>
+</div>
+</div>
+</div>
+<!-- Shop Card 2 -->
+<div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="h-48 relative">
+<img alt="Local Grocery Store" class="w-full h-full object-cover" data-alt="Boutique grocery store with fresh vegetables and pantry staples displayed in baskets" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOy5Gb2FW5JZQaUCwlwVukmZQS4DKqbe75fI5x4CIdz6gqo5osjKpe0-PCVhVTYZQI0nli4lSn73RkBx4rju-NJrJ6QRrfgJEbXIlVspdrh31rFUGoof_JfH05Q768bVJIVd-AIBhAhtlXibdx5WQYnPFu_RL74DWyzwSjrsYxPymWHEzCLRNKzzYDayGLwO8Hp2z0IJMkk_O0OGgeoeI-nfbkPgTDgzbmFfMLcsfRbT60yJFRdFvjijGV7PE3c89fmho_oOLHGgAj"/>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.6</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Mahalaxmi Groceries</h3>
+<p class="text-xs font-medium text-primary">Farm Fresh &amp; Flour Mill</p>
+</div>
+<span class="text-xs font-medium text-slate-500">0.9 km away</span>
+</div>
+<div class="flex gap-2 mt-4">
+<span class="text-[10px] font-bold uppercase tracking-tight bg-surface-container-low px-2 py-1 rounded">Fresh Atta</span>
+<span class="text-[10px] font-bold uppercase tracking-tight bg-surface-container-low px-2 py-1 rounded">Organic Pulses</span>
+</div>
+</div>
+</div>
+<!-- Shop Card 3 -->
+<div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="h-48 relative">
+<img alt="Sacks of grains" class="w-full h-full object-cover" data-alt="Detailed shot of burlap sacks filled with different varieties of rice and lentils in a wholesale grocery market" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpkoJu4nL-cCyFdbcu_XiHvW5HBejtAU-zvumyjmGoF-x7zkZXabD4xHtj7dVYLc2OASuVN6401QsGsf1XQX2bgLqw5xFLMx5f2dZ8VSlb-DgcUada4Zm59nkhznK1OKfnTBwhSMQ7KzIT_-tw4ktFT2J-EX1W84wOPDCuMWuO1soVSiIgbIm5TLKD2nuVHZwsIZEFjhfBjYvLXAw5SF5osUO2_CvFT4pTpky7YHJZh35Pjg9EbH9GGKc5qnvpOGcFGlNMBy8s_irV"/>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.9</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Pantry Plus Wholesale</h3>
+<p class="text-xs font-medium text-primary">Bulk Groceries</p>
+</div>
+<span class="text-xs font-medium text-slate-500">1.5 km away</span>
+</div>
+<div class="flex gap-2 mt-4">
+<span class="text-[10px] font-bold uppercase tracking-tight bg-surface-container-low px-2 py-1 rounded">Best Value</span>
+<span class="text-[10px] font-bold uppercase tracking-tight bg-surface-container-low px-2 py-1 rounded">Direct from Farm</span>
+</div>
+</div>
+</div>
+<!-- Featured Card -->
+<div class="md:col-span-1 bg-primary-container text-white rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden">
+<div class="z-10">
+<h3 class="font-headline font-bold text-2xl mb-2">Kirana Premium</h3>
+<p class="text-sm opacity-80 leading-relaxed max-w-[180px]">Enjoy unlimited free delivery from all local Kirana partners.</p>
+</div>
+<button class="z-10 mt-8 w-fit bg-white text-primary font-bold py-2 px-6 rounded-full text-xs">Upgrade Now</button>
+<span class="absolute -right-4 bottom-0 material-symbols-outlined text-[100px] opacity-10" data-icon="verified">verified</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md rounded-t-2xl shadow-2xl dark:shadow-none border-t border-slate-200/15">
+<a class="flex flex-col items-center justify-center bg-teal-100 dark:bg-teal-900/40 text-teal-900 dark:text-teal-100 rounded-full px-5 py-1 transform scale-90 duration-200" href="#">
+<span class="material-symbols-outlined text-teal-700" data-icon="home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Stores</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Cart</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Profile</span>
+</a>
+</nav>
+</body></html>

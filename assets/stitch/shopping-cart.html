@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Your Basket - GroceryCurator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#75d5e2",
+                    "on-primary-fixed-variant": "#004f56",
+                    "primary-container": "#00818d",
+                    "surface-tint": "#006972",
+                    "primary": "#006670",
+                    "on-background": "#181c23",
+                    "surface-container-high": "#e6e8f3",
+                    "inverse-on-surface": "#eef0fb",
+                    "inverse-primary": "#75d5e2",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#fffbff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#414754",
+                    "secondary-fixed-dim": "#ffb778",
+                    "secondary-fixed": "#ffdcc1",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary": "#755700",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#f6feff",
+                    "primary-fixed": "#92f1fe",
+                    "surface": "#f9f9ff",
+                    "surface-dim": "#d7d9e5",
+                    "outline-variant": "#c1c6d7",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#6c3a00",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e0e2ed",
+                    "secondary": "#8e4e00",
+                    "on-tertiary-fixed-variant": "#5b4300",
+                    "surface-container-low": "#f1f3fe",
+                    "inverse-surface": "#2d3039",
+                    "tertiary-fixed-dim": "#fabd00",
+                    "secondary-container": "#fd9000",
+                    "on-tertiary-fixed": "#261a00",
+                    "tertiary-container": "#946f00",
+                    "on-surface": "#181c23",
+                    "outline": "#717786",
+                    "on-secondary-container": "#613400",
+                    "tertiary-fixed": "#ffdf9e",
+                    "on-primary-fixed": "#001f23",
+                    "background": "#f9f9ff",
+                    "surface-variant": "#e0e2ed",
+                    "on-secondary-fixed": "#2e1500",
+                    "surface-container": "#ebedf9",
+                    "surface-bright": "#f9f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9ff]/80 backdrop-blur-md flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 duration-200 text-[#006670]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold text-[#006670] font-headline tracking-tight">GroceryCurator</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative active:scale-95 duration-200 text-[#006670]">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+<span class="absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">3</span>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-32 px-4 max-w-2xl mx-auto">
+<!-- Header Section -->
+<section class="mb-8">
+<h2 class="text-2xl font-headline font-extrabold tracking-tight text-on-surface">My Basket</h2>
+<p class="text-on-surface-variant text-sm font-body">Review your items before we get them delivered to you.</p>
+</section>
+<!-- Cart Items List -->
+<section class="space-y-6">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 flex gap-4 items-center shadow-sm">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="bottle of clear golden vegetable oil on a clean white surface with natural soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClpTp-r5SyUsSvsXtp0huNHx_YeFclGw6t1rI253234Gu11ED2nFS7puHJBs8VMelqPY3X58AnhGx3Neo1Cud0wrUoU-FjG4V0rdO6l5NiRU5sCDGmFNvaaLX2CH9RUFPB0zTcH54veFzEcvxVqTZSCuOJ6e0uDEZq33JXbBQE1FAseVstIlsdnHMsNg_JEyBPjLL6TN5TXPQhvYB0UyjaNGY_IR8XGlqhp8uBJwyB5ztb9Rdkjq3BqP1kPpP_GFB1aktvZvmFyGlu"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline font-bold text-on-surface text-base">Fortune Sunlite Oil</h3>
+<p class="text-label-sm text-on-surface-variant mb-2">Refined Sunflower Oil, 1L</p>
+<p class="font-headline font-extrabold text-primary">$12.50</p>
+</div>
+<div class="flex flex-col items-center gap-2 bg-surface-container-low rounded-full px-2 py-3">
+<button class="text-primary hover:bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+<span class="font-bold text-sm">1</span>
+<button class="text-primary hover:bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 flex gap-4 items-center shadow-sm">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="pile of yellow split peas moong dal in a rustic ceramic bowl top view soft light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK71vi2dxkvlvhJfhtPJkvss8GqmwCjimL1m6_hd4LAs6kZ_o86WT-n0airqt_pBzoZPjNsmaEvvmOdLsT6NI4WkXz72mF2q5-y4_3xe9O3-cYFtK5Q5aEVpcqUGN37v8KT_9SN4dgMvvEvTZjDiSUZh4J28D06ntauT4bb4PYjEb5r7cUCH5IMbg56j-DCoXfump_aMq5TnrtZ-P0hq6cgCCrfB69gaGrf3rvj4r7zXfZoppvlF0Hkidr8qzciNAATtwwJE06Pvw5"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline font-bold text-on-surface text-base">Tata Sampann Moong Dal</h3>
+<p class="text-label-sm text-on-surface-variant mb-2">Unpolished Moong Dal, 500g</p>
+<p class="font-headline font-extrabold text-primary">$4.20</p>
+</div>
+<div class="flex flex-col items-center gap-2 bg-surface-container-low rounded-full px-2 py-3">
+<button class="text-primary hover:bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+<span class="font-bold text-sm">2</span>
+<button class="text-primary hover:bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 flex gap-4 items-center shadow-sm">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="vibrant yellow turmeric powder in a wooden spoon on a textured stone surface professional product shot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDXEtNxRUCq0iAvD9lmbcFXvW_g-ESEvhZIIm-2QO2Eq0OV5z6S61Zej_gcEFcyLlfo2K3EB5TCH1IZYvL9ML99Jqbk2Ldhgi0x04dckOIP57PowSZ01TbVIuj1rl3CvprL-lZ3zo0MFk25DGF0_KmMgQi3jTrz87FjTnjELW6C4mUFDhbbcjPdLYd3aKzegOUuSNQIfpyGvhDagbkoi-qZe-ZjBAEOBXQ8KhYYHcqxMG-aG2_8j1TX9X_YlmER8fvmkqaj_lLFuem"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline font-bold text-on-surface text-base">MDH Haldi</h3>
+<p class="text-label-sm text-on-surface-variant mb-2">Turmeric Powder, 200g</p>
+<p class="font-headline font-extrabold text-primary">$2.10</p>
+</div>
+<div class="flex flex-col items-center gap-2 bg-surface-container-low rounded-full px-2 py-3">
+<button class="text-primary hover:bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+<span class="font-bold text-sm">1</span>
+<button class="text-primary hover:bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Upsell/Feature Float Asymmetric Section -->
+<section class="mt-12 mb-8 relative">
+<div class="bg-primary-container rounded-xl p-8 text-on-primary-container min-h-[160px] flex flex-col justify-center">
+<h4 class="text-xl font-headline font-bold mb-1">Add Fresh Produce?</h4>
+<p class="text-sm opacity-90 max-w-[60%]">Complete your meal with organic local farm vegetables.</p>
+</div>
+<div class="absolute -right-2 top-4 w-32 h-40 bg-surface-container-lowest rounded-xl shadow-lg p-2 rotate-6 overflow-hidden border border-outline-variant/15">
+<img class="w-full h-full object-cover rounded-lg" data-alt="selection of fresh vibrant green spinach and bright red tomatoes in a rustic crate soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAow7jEv4JkVIl4tPALiQw7i_Vk3D9ACgiNwmZm9thpKA7jXGwZAN6mY8zCNNDDc8-NFIjp_RIKxIaGE1jV_Iq5hal0R2VK6rv_IBUKHJn5hRFvDb28ao9L1MipFx-QlTWBjRNtjVW70PReoHzACB-uUO_mLdIcvDqvGEc1OVSSH1mAqxEoVhKMfHrLoSbrnm-Fcswl-BgpvqxA3iC-YwGXvzKKyyGG0t5DrC6A9bQ6gPPuCXAY0uuNb8E0FGLTK9xekvsLcEXeO9Db"/>
+</div>
+</section>
+<!-- Price Breakdown -->
+<section class="bg-surface-container-low rounded-2xl p-6 mb-8 space-y-4">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-medium">Subtotal</span>
+<span class="font-headline font-bold">$23.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-medium">Delivery Fee</span>
+<span class="font-headline font-bold">$1.50</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-medium">Tax</span>
+<span class="font-headline font-bold text-primary">$0.85</span>
+</div>
+<div class="pt-4 mt-2 border-t border-outline-variant/30 flex justify-between items-center">
+<span class="text-lg font-headline font-extrabold text-on-surface">Total</span>
+<span class="text-2xl font-headline font-extrabold text-primary">$25.35</span>
+</div>
+</section>
+<!-- Action Button -->
+<button class="w-full bg-primary text-on-primary py-4 rounded-full font-headline font-bold text-lg active:scale-95 duration-200 shadow-xl shadow-primary/20 flex items-center justify-center gap-3">
+            Proceed to Checkout
+            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</main>
+<!-- BottomNavBar (Hidden on desktop via shell logic if requested, but presented as per component JSON) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-6 bg-[#f9f9ff]/80 backdrop-blur-md rounded-t-[24px] border-t border-[#c1c6d7]/15 shadow-[0px_-4px_16px_rgba(24,28,35,0.04)] z-50">
+<div class="flex flex-col items-center justify-center text-[#181c23]/60 hover:opacity-80 transition-opacity active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="home_app_logo">home_app_logo</span>
+<span class="font-['Inter'] text-[11px] font-medium">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#181c23]/60 hover:opacity-80 transition-opacity active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-['Inter'] text-[11px] font-medium">Shops</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#006670]/10 text-[#006670] rounded-full px-4 py-1 active:scale-90 duration-200">
+<span class="material-symbols-outlined active-icon" data-icon="add_shopping_cart" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+<span class="font-['Inter'] text-[11px] font-medium">Request</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#181c23]/60 hover:opacity-80 transition-opacity active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[11px] font-medium">Profile</span>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Radiant Market - Shop Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#75d5e2",
+                        "on-background": "#181c23",
+                        "tertiary-fixed-dim": "#fabd00",
+                        "on-tertiary-fixed-variant": "#5b4300",
+                        "primary-container": "#00818d",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001f23",
+                        "background": "#f9f9ff",
+                        "on-primary-fixed-variant": "#004f56",
+                        "tertiary-fixed": "#ffdf9e",
+                        "outline": "#717786",
+                        "primary": "#006670",
+                        "outline-variant": "#c1c6d7",
+                        "inverse-on-surface": "#eef0fb",
+                        "secondary-fixed": "#ffdcc1",
+                        "on-secondary-fixed-variant": "#6c3a00",
+                        "primary-fixed": "#92f1fe",
+                        "surface-container-high": "#e6e8f3",
+                        "secondary": "#8e4e00",
+                        "secondary-container": "#fd9000",
+                        "on-secondary-fixed": "#2e1500",
+                        "surface-container-highest": "#e0e2ed",
+                        "on-surface": "#181c23",
+                        "surface-tint": "#006972",
+                        "surface": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#ebedf9",
+                        "on-tertiary-fixed": "#261a00",
+                        "surface-variant": "#e0e2ed",
+                        "on-secondary-container": "#613400",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-low": "#f1f3fe",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#f6feff",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d7d9e5",
+                        "tertiary": "#755700",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed-dim": "#ffb778",
+                        "on-surface-variant": "#414754",
+                        "inverse-primary": "#75d5e2",
+                        "inverse-surface": "#2d3039",
+                        "tertiary-container": "#946f00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased pb-40">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md">
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100/50 transition-colors Active: scale-95 duration-150 ease-in-out">
+<span class="material-symbols-outlined text-teal-700 dark:text-teal-400">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold text-teal-900 dark:text-teal-100 font-headline tracking-tight">Radiant Market</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-teal-700 dark:text-teal-400 cursor-pointer">location_on</span>
+<span class="material-symbols-outlined text-teal-700 dark:text-teal-400 cursor-pointer">search</span>
+</div>
+</header>
+<main class="mt-16 max-w-5xl mx-auto px-4 md:px-6">
+<!-- Shop Hero Section (Asymmetric Overlap Layout) -->
+<section class="relative mb-12 pt-6">
+<div class="w-full h-64 md:h-80 overflow-hidden rounded-xl bg-primary-container relative">
+<img class="w-full h-full object-cover opacity-80" data-alt="Organized interior of a modern Indian grocery store with shelves stocked with pulses, spices, and grains in a clean, well-lit environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcsMSgbByuLh8o2DmogytYAlBBK0D435NihK2oZnrYhpOL2976BUKuFPhncNYTQMz_3tEQ2n4Oo3B-M4rWw6cwDNNvHIPJ87btcPDb34cDS6w6qOc29bJ0V7TVQp69p6OPWSEulMROLqlBuPehAbwXWk4XhpsJLR_oeJhI-E77p4oXM_MFGz6MewwjrL1jT1G3BUVAR0PGtTkydorqrl7LceIJd0kkK3bu_qvcKLqo_hZuD2juGx6FnizhOAP4qgg-SVePmPhkgLAD"/>
+</div>
+<div class="absolute -bottom-8 left-6 right-6 md:left-12 md:right-auto md:w-[480px]">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-2xl shadow-on-surface/5 border border-outline-variant/15">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="text-2xl font-bold font-headline tracking-tight text-on-surface">Krishna General Store</h2>
+<p class="text-sm text-on-surface-variant mb-3">Daily Groceries &amp; Pantry Staples</p>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 bg-secondary-container/20 text-on-secondary-container px-2 py-0.5 rounded-full text-xs font-semibold">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4.7</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant text-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>10-20 min</span>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-full border border-outline-variant/30 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Filter Bar -->
+<section class="mt-16 mb-8 flex flex-col md:flex-row gap-4 items-center">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-highest border-none rounded-full text-on-surface focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="Search for dal, oil, spices..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto hide-scrollbar w-full md:w-auto pb-2">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary text-on-primary font-semibold text-sm">All Items</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-slate-100 transition-colors text-sm font-medium">Pulses</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-slate-100 transition-colors text-sm font-medium">Oil &amp; Ghee</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-slate-100 transition-colors text-sm font-medium">Masalas</button>
+</div>
+</section>
+<!-- Product Grid -->
+<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+<!-- Product Card 1: Cooking Oil -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="High quality golden sunflower oil in a clear plastic bottle on a kitchen counter" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzzKg4YsFj31gZd-iLVMOdm-xK_N8vAKFeZz43BVV4UMwr8Elepovi5Q4m1xHwbYyl1xJcmlADf20-SvRvAtK5JDCo2r7rztmDslL5MGyqOJGLzXt5LTutozEn2XgRPjXjoI_D6l5DkGIHpIUdhYdbr8dWP7daGWJI_U9xFjGrwF6WpUXCb7EiiGHR17VLMPPzaVU4-AQ_ga83N4nrBj7fwhgptQHs_Qy8CVQEDVFxZMjl6GKKJnWmIhskmYARg5wC1nnNOyZy04V0"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Fortune Sunflower Oil</h3>
+<p class="text-xs text-on-surface-variant mb-3">1 Litre Pouch</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">₹145.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2: Toor Dal (Active Counter State) -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col shadow-lg border border-primary/20">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Premium yellow Toor Dal pulses in a wooden bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmnuZlzhAKD06b1Xog6WLBBwgwF7M73wBGhAGGUmMk-2TkZmR-C52WqaMt_g6oonVDaxaAIaF1BkhESw2LSbw044R_nmP43lgRjZfPNnfrsDza7SBcRmMhaPw_2TVwvffY6kElZ_T9ZNXeO5BieBxVpy8rw58n4dFqWSaq14GYyp7bB1mXwOYrjAQHE_xdu0EShoZ_VXZypKRETSs9Y1_qyzQ35cKTn6jvZ6iDGXouDIHfzugLNAx5ScvU_xbr9u9NAcpvjDpiOPcj"/>
+<div class="absolute top-2 right-2 bg-secondary text-on-secondary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">1 in cart</div>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Tata Sampann Toor Dal</h3>
+<p class="text-xs text-on-surface-variant mb-3">Unpolished - 1 kg</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">₹185.00</span>
+<div class="flex items-center bg-primary-container/10 rounded-full p-1 gap-3 border border-primary/20">
+<button class="w-6 h-6 flex items-center justify-center rounded-full bg-surface-container-lowest text-primary">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<span class="text-sm font-bold text-on-primary-fixed-variant">1</span>
+<button class="w-6 h-6 flex items-center justify-center rounded-full bg-primary text-on-primary">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Product Card 3: Turmeric Powder -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Bright orange turmeric powder in a small glass bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjs86xhaJduQOpmnlwIv8nJxUpIASsy_EF7bHRjU68bNhpeYApcJ7kanOxwJsTOZsQ4SaqxGYWIS8yvOJY2KDo4cPnUx2WroDW3n1__kzHOgKzQ24EoWXQ4fG8jQ_zxuCqjIx2_TiJ91orHxwzop89BXZrKorDMuOKq8VDGffGLfCY_89fkFKLJSb_vwTH13cdW6e_UWFbfL7MZDday_PtTyxxC1F7og3OuSGBbUZt9DEjLk3fwZ78YW7gcRDDOU6qpORwZlfoSmgF"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">MDH Haldi Powder</h3>
+<p class="text-xs text-on-surface-variant mb-3">Aromatic Spices - 200g</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">₹65.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4: Moong Dal -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Yellow split moong dal in a rustic ceramic bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPpb5cbhe0Ybk2aliNjeZGeyT9RU_E6GbCFbC8wL0nDOnSTkZ3ZlZNPZikrdChyCmf8V9H-rZmcgVuaLW02WG6S_jMBIOkpS6kcrgDAXEV7MtCae0k-sm3dPWx3Br5b7dPjdXFfS2Bw1orOgJ9L1rGn2jRmpRsbEHZ09D4BB4GsLcorlREQogwc6Y0Usq-1I8O_hsP04PC4QlM64j6-9RXYgsdpbB5XtT5BkAf1pkmyejWvX1Pe2yu1qIdRf5NGkewPLbW0TqBwpJd"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Moong Dal Mogar</h3>
+<p class="text-xs text-on-surface-variant mb-3">Premium Quality - 1 kg</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">₹140.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 5: Garam Masala -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Traditional Indian spice mix garam masala with whole cloves and cardamom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBewhtlnrKdAhsJefo87YgjYVBfvdVCf3TW629EVqhgw1nPlC5dQTqnqLZWfQyq36qN5rAi_9b8nztt8jLsCX9zV9z2VNoDTrExWMhrE2mzF6qOACyXDly353Ia963MTQVFjl4U5tOYlJLa1Ma7j3TS0HBQTC2bVnckQeQxVNitxq_BEu_78ZE17f7Sb4dgN1ncDLDH0uMU_caX8IYO7XAkmRxZ5xrB3F7hS6c_WIifVgovOG5rPHXw6OEC3fI_eDkA_lx7X07vpXWw"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Everest Garam Masala</h3>
+<p class="text-xs text-on-surface-variant mb-3">Kitchen King - 100g</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">₹88.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 6: Basmati Rice -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Long grain Basmati rice grains in a burlap bag" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfHSk0XszZ616T5R7a6cffmYkC52LuaIy3w9AG_mPVcMDGl363z0xIZWrGOomHN_y8RROCR09XK97lqlSDu7Kac_aopDkpRC2va4bDFfMUd0rUYmb9zR6s5gomrXdKXPCT8AsW-vlfq5D6YwEMnQScaR7KI9iN4XJEHOZ__omx31dFH-5gBAyWugQA51V0H8kPhrKK3q3BDIEKCdcsOYmaObLZlOGCZOoH26AEw33573zIgctAbW89VzSWP6zyAJCI8BNHQEis499a"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Daawat Basmati Rice</h3>
+<p class="text-xs text-on-surface-variant mb-3">Long Grain Rozana - 5 kg</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">₹425.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Sticky View Cart Bar (Above BottomNavBar) -->
+<div class="fixed bottom-[88px] left-0 w-full z-40 px-4 md:px-8">
+<div class="max-w-5xl mx-auto">
+<button class="w-full bg-secondary text-on-secondary flex justify-between items-center h-14 px-6 rounded-full shadow-xl shadow-secondary/20 hover:scale-[1.01] active:scale-95 transition-transform">
+<div class="flex items-center gap-3">
+<div class="bg-on-secondary/20 rounded-lg px-2 py-0.5 text-sm font-bold">1 Item</div>
+<span class="font-semibold font-label">View Your Cart</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-bold">₹185.00</span>
+<span class="material-symbols-outlined">shopping_cart_checkout</span>
+</div>
+</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md rounded-t-2xl border-t border-slate-200/15 dark:border-slate-800/15 shadow-2xl dark:shadow-none">
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 dark:hover:text-teal-300" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-teal-100 dark:bg-teal-900/40 text-teal-900 dark:text-teal-100 rounded-full px-5 py-1 transform scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Shops</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 dark:hover:text-teal-300" href="#">
+<span class="material-symbols-outlined" data-icon="request_quote">request_quote</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Request</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 dark:hover:text-teal-300" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Radiant Market - Shop Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#75d5e2",
+                        "on-background": "#181c23",
+                        "tertiary-fixed-dim": "#fabd00",
+                        "on-tertiary-fixed-variant": "#5b4300",
+                        "primary-container": "#00818d",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001f23",
+                        "background": "#f9f9ff",
+                        "on-primary-fixed-variant": "#004f56",
+                        "tertiary-fixed": "#ffdf9e",
+                        "outline": "#717786",
+                        "primary": "#006670",
+                        "outline-variant": "#c1c6d7",
+                        "inverse-on-surface": "#eef0fb",
+                        "secondary-fixed": "#ffdcc1",
+                        "on-secondary-fixed-variant": "#6c3a00",
+                        "primary-fixed": "#92f1fe",
+                        "surface-container-high": "#e6e8f3",
+                        "secondary": "#8e4e00",
+                        "secondary-container": "#fd9000",
+                        "on-secondary-fixed": "#2e1500",
+                        "surface-container-highest": "#e0e2ed",
+                        "on-surface": "#181c23",
+                        "surface-tint": "#006972",
+                        "surface": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#ebedf9",
+                        "on-tertiary-fixed": "#261a00",
+                        "surface-variant": "#e0e2ed",
+                        "on-secondary-container": "#613400",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-low": "#f1f3fe",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#f6feff",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d7d9e5",
+                        "tertiary": "#755700",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed-dim": "#ffb778",
+                        "on-surface-variant": "#414754",
+                        "inverse-primary": "#75d5e2",
+                        "inverse-surface": "#2d3039",
+                        "tertiary-container": "#946f00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased pb-40">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md">
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100/50 transition-colors Active: scale-95 duration-150 ease-in-out">
+<span class="material-symbols-outlined text-teal-700 dark:text-teal-400">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold text-teal-900 dark:text-teal-100 font-headline tracking-tight">Radiant Market</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-teal-700 dark:text-teal-400 cursor-pointer">location_on</span>
+<span class="material-symbols-outlined text-teal-700 dark:text-teal-400 cursor-pointer">search</span>
+</div>
+</header>
+<main class="mt-16 max-w-5xl mx-auto px-4 md:px-6">
+<!-- Shop Hero Section (Asymmetric Overlap Layout) -->
+<section class="relative mb-12 pt-6">
+<div class="w-full h-64 md:h-80 overflow-hidden rounded-xl bg-primary-container relative">
+<img class="w-full h-full object-cover opacity-80" data-alt="Modern artisanal boutique shop interior with organized wooden shelves, warm hanging Edison bulbs, and high-end lifestyle products in a sunlit space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFcAYlRLQX5LOE5I0fW7_fFRXIL1zEsb0TEQc2zZPwt3PrKFzM2HInflA74mgFgf9qeD8HOyqAY5ryJuozJ-WHVnFispcwSodhyH4ql62OWJKy6uBBh4ojyO2JM0MBfyjVSjOlpXFs1ZhAVaJd0QhOedcHFjzV-KXUhfG8rYpur0nT8M8e1PTEcVjTnBz5DY5K2WIE1hmheS5TMyCG0ZSfr8n4XOYo6Pext_q1yxOp5jjClzDooWvhcIj-zjtXDWo0BpJ8RfDQWJ2E"/>
+</div>
+<div class="absolute -bottom-8 left-6 right-6 md:left-12 md:right-auto md:w-[480px]">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-2xl shadow-on-surface/5 border border-outline-variant/15">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="text-2xl font-bold font-headline tracking-tight text-on-surface">The Artisan Collective</h2>
+<p class="text-sm text-on-surface-variant mb-3">Gourmet &amp; Handcrafted Goods</p>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 bg-secondary-container/20 text-on-secondary-container px-2 py-0.5 rounded-full text-xs font-semibold">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4.9</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant text-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>15-25 min</span>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-full border border-outline-variant/30 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Filter Bar -->
+<section class="mt-16 mb-8 flex flex-col md:flex-row gap-4 items-center">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-highest border-none rounded-full text-on-surface focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="Search in this shop..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto hide-scrollbar w-full md:w-auto pb-2">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary text-on-primary font-semibold text-sm">All Items</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-slate-100 transition-colors text-sm font-medium">Bestsellers</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-slate-100 transition-colors text-sm font-medium">New Arrival</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-slate-100 transition-colors text-sm font-medium">Bundles</button>
+</div>
+</section>
+<!-- Product Grid (Bento Style Variation) -->
+<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Minimalist luxury white ceramic watch on a textured grey background with soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8KxJhUAKDS7Xutnnfmtla9dE1n_7slhBau-iGHjazkqS3EDO7VijD1GIjXx0flQTN-kmMwPl9TiaRxWWiY6MVta3BCNSA8T4s19Vmxkoh5M8YcYqpY9iVZ2FwGnpK3Zbo_ClwAngR-5AFyqepHMfsB1ZyKKzmzDzsKifOnQ26NvQx18KJvSqsSRZDhzUr8oHhN5T7M5a8y93QlA9MC9lKqDa6oS_a3kOkpUxgN5Ws7HxuEBMu63MaQgB9lSqMkMzRFrpw54q4WH6p"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Classic White Watch</h3>
+<p class="text-xs text-on-surface-variant mb-3">Limited Edition Artisan Series</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">$120.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 (Active Counter State) -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col shadow-lg border border-primary/20">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Handcrafted dark chocolate bar in artisanal packaging resting on cocoa beans with moody dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZN00tXXVl7FhN6gLuSGliK3LYoHrbvOL4-tZhgzrihVwO6vpvxORgvjE7ohwLet5T-hSnBlIwYtyq2hxeijiWp_9YG3aTAxnoGwf-XSyguAjO_lvlUWCKv0wDaZ_l8BThymTMBikdhjVJ72_Ijr6-BwyPF9xgQF_bB22wPbGh6BzPQyB4JIOiVESOEk2ak_Cm8BUonwmlfBTIn2FvJkK3U0kHzq4-qGDMHe_2ldP8Yfi4xCcb_f--FIJ3FLJXgwz72zu9fCaXrVcX"/>
+<div class="absolute top-2 right-2 bg-secondary text-on-secondary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">1 in cart</div>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Dark Cocoa Bar</h3>
+<p class="text-xs text-on-surface-variant mb-3">75% Single Origin Madagascar</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">$12.50</span>
+<div class="flex items-center bg-primary-container/10 rounded-full p-1 gap-3 border border-primary/20">
+<button class="w-6 h-6 flex items-center justify-center rounded-full bg-surface-container-lowest text-primary">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<span class="text-sm font-bold text-on-primary-fixed-variant">1</span>
+<button class="w-6 h-6 flex items-center justify-center rounded-full bg-primary text-on-primary">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Aesthetic glass spray bottle of linen mist with organic cotton towels in a bright airy morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGdIMf0kTFEIB71_t4hewhFWQd7ZPdwPJRpFgN3z93PKoD0xF5Og-BhPRCoTt2CNkde3kNPw2hC8TLSxpUDcjRVBdSNmYa4ukMPoTXMjbUel_qYhBp34kUUCK7IXXhCJY2WZ5jRZ8jTQmMsQJUgy3KdLlmvj2Dz0uo2P4pLDJbqF1QlmeOZyNgQ6cVhJHNiAe1NwXIqNb5zkSkb02Dywu1QDZjVJnN0Z4yY1yO11XAYLyMBuk9DHJZAY8VR0T2MHAK3npvJhGkG1Ud"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Fresh Linen Mist</h3>
+<p class="text-xs text-on-surface-variant mb-3">Essential Oils &amp; Botanicals</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">$24.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="High quality tan leather personal journal on a marble table next to a brass pen in soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsMugXf_TP6811OCg8ycUv8Ctt7TnUGr_4UtIXDM8iJmOw54hitFzlhbWLGueXz37EDyqhE8eLr7sy03pvOnTyA4kBVzGMhQWMBx8eYrmUiZG_rUQOAFjmEieNlT1CGKHTskgRnDg_v46UXaIy3Eeh1QKcIFzB2dANKEX7-SlL_u8KYH3rLnbwb6xC_5raLBGB9jcz9JPEdnUuu87W8g4uVm698G_rtpM0YUywwlcB6AYVexLXSZh2OO3sjeMS1All9NF0d4RwaQ9J"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Tan Leather Journal</h3>
+<p class="text-xs text-on-surface-variant mb-3">Hand-stitched Premium Grain</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">$45.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Collection of organic skincare bottles in amber glass with white labels on a minimalist bathroom shelf" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEDDLA1-kx_83b9QqMjg6RUmtoVkbG_yEjkcwd2InBA1D2XZUR-wQSpIZO0wVOGvmdDZnj9IULay66ytnCJvIsOLm_L8sKTJKR_67zc3_xo_mnT4cQczqgDycWn1HcxDWserfk9u7WrHYg8-tuFv433S-4WY_2dn8VPTigbhoN_M0r3wCue51OueKmgRfv1hWOlnoMAnDfwE00vTMf1OEOvV3g4BwY7sHiQMTNsbSOuM10CYJ8LqzAXjoptii-uz3Vmyqt2Sx-Taw9"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Organic Face Serum</h3>
+<p class="text-xs text-on-surface-variant mb-3">Hyaluronic Acid &amp; Vitamin C</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">$38.00</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 6 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-all border border-outline-variant/10">
+<div class="aspect-square w-full relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Gourmet coffee beans spilling from a burlap sack on a rustic wooden table with morning sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuITZc4byB1hGb_kUyn232sxKXFH2kRdAok9RUQ4Mjp9UUqZVfRvGTbbOGTfYaljRmqCvMhtiLYLg3NSex5QMnUrKqmmLdTlwORSAYPVFKya2KTWcYXOKljlJh-BahqTGzZo689sSdbdHovp5glk40vOuudiV8c50B9lRo6vW6cI6aJPSsQASOjZS5hR-QMPHu1R2VOj_MkrvSfemAiJ3AljngZvuvfVA2S1e3isd2FEdZWiRGeMcOXlzZy-1QVbsKsNtHDi1WKQwQ"/>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<h3 class="font-semibold text-on-surface line-clamp-1">Ether Roast Beans</h3>
+<p class="text-xs text-on-surface-variant mb-3">Medium Roast Ethiopian Blend</p>
+<div class="mt-auto flex justify-between items-center">
+<span class="font-bold text-primary">$18.50</span>
+<button class="flex items-center justify-center bg-primary text-on-primary w-8 h-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Sticky View Cart Bar (Above BottomNavBar) -->
+<div class="fixed bottom-[88px] left-0 w-full z-40 px-4 md:px-8">
+<div class="max-w-5xl mx-auto">
+<button class="w-full bg-secondary text-on-secondary flex justify-between items-center h-14 px-6 rounded-full shadow-xl shadow-secondary/20 hover:scale-[1.01] active:scale-95 transition-transform">
+<div class="flex items-center gap-3">
+<div class="bg-on-secondary/20 rounded-lg px-2 py-0.5 text-sm font-bold">1 Item</div>
+<span class="font-semibold font-label">View Your Cart</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-bold">$12.50</span>
+<span class="material-symbols-outlined">shopping_cart_checkout</span>
+</div>
+</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md rounded-t-2xl border-t border-slate-200/15 dark:border-slate-800/15 shadow-2xl dark:shadow-none">
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 dark:hover:text-teal-300" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-teal-100 dark:bg-teal-900/40 text-teal-900 dark:text-teal-100 rounded-full px-5 py-1 transform scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Shops</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 dark:hover:text-teal-300" href="#">
+<span class="material-symbols-outlined" data-icon="request_quote">request_quote</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Request</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-5 py-1 hover:text-teal-600 dark:hover:text-teal-300" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[11px] font-semibold tracking-normal font-label">Profile</span>
+</a>
+</nav>
+</body></html>

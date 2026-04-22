@@ -7,6 +7,7 @@ import { BlurView } from 'expo-blur';
 import { useAuth } from '../context/AuthContext';
 import { AddressRepository } from '../repositories/AddressRepository';
 import type { Address } from '../models/Address';
+import { getOrders, type OrderResponse } from '../services/OrderService';
 
 const COLORS = {
   surface: '#f9f9ff',
@@ -54,17 +55,31 @@ const addressRepo = new AddressRepository();
 export default function ProfileScreen({ navigation }: any) {
   const { user, signOut } = useAuth();
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [recentOrders, setRecentOrders] = useState<OrderResponse[]>([]);
 
   const loadAddresses = useCallback(async () => {
     const saved = await addressRepo.getAll();
     setAddresses(saved);
   }, []);
 
+  const loadOrders = useCallback(async () => {
+    try {
+      const orders = await getOrders();
+      setRecentOrders(orders.slice(0, 3));
+    } catch {
+      // silently ignore — not critical for profile screen
+    }
+  }, []);
+
   useEffect(() => {
     loadAddresses();
-    const unsubscribe = navigation.addListener('focus', loadAddresses);
+    loadOrders();
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadAddresses();
+      loadOrders();
+    });
     return unsubscribe;
-  }, [navigation, loadAddresses]);
+  }, [navigation, loadAddresses, loadOrders]);
 
   const handleLogout = async () => {
     Alert.alert('Logout', 'Are you sure you want to log out?', [
@@ -174,12 +189,54 @@ export default function ProfileScreen({ navigation }: any) {
 
           {/* Recent Orders */}
           <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.section}>
-            <Text style={[styles.sectionTitle, { marginBottom: 16 }]}>Recent Orders</Text>
-            <View style={styles.ordersPlaceholder}>
-              <MaterialIcons name="receipt-long" size={36} color={COLORS.outlineVariant} />
-              <Text style={styles.ordersPlaceholderTitle}>Order history coming soon</Text>
-              <Text style={styles.ordersPlaceholderSubtitle}>Your recent orders will appear here once the feature is available.</Text>
+            <View style={styles.sectionHeaderRow}>
+              <Text style={styles.sectionTitle}>Recent Orders</Text>
+              {recentOrders.length > 0 && (
+                <Pressable onPress={() => navigation.navigate('OrderHistory')}>
+                  <Text style={styles.viewAllText}>View All</Text>
+                </Pressable>
+              )}
             </View>
+            {recentOrders.length === 0 ? (
+              <TouchableScale style={styles.ordersPlaceholder} onPress={() => navigation.navigate('OrderHistory')}>
+                <MaterialIcons name="receipt-long" size={36} color={COLORS.outlineVariant} />
+                <Text style={styles.ordersPlaceholderTitle}>No orders yet</Text>
+                <Text style={styles.ordersPlaceholderSubtitle}>Your recent orders will appear here.</Text>
+              </TouchableScale>
+            ) : (
+              <View style={styles.ordersList}>
+                {recentOrders.map((order) => (
+                  <TouchableScale
+                    key={order.id}
+                    style={styles.orderCard}
+                    onPress={() => navigation.navigate('OrderHistory')}
+                  >
+                    <View style={styles.orderCardLeft}>
+                      <View style={styles.orderIconBg}>
+                        <MaterialIcons name="storefront" size={20} color={COLORS.primary} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.orderShop} numberOfLines={1}>
+                          {order.shopDisplayName ?? 'Shop'}
+                        </Text>
+                        <Text style={styles.orderMeta}>
+                          {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                          {' · '}{order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.orderCardRight}>
+                      <Text style={styles.orderAmount}>₹{(order.totalMinor / 100).toFixed(0)}</Text>
+                      <View style={[styles.orderStatusDot, {
+                        backgroundColor:
+                          order.status === 'DELIVERED' ? '#10b981' :
+                          order.status === 'CANCELLED' ? '#ef4444' : '#f59e0b'
+                      }]} />
+                    </View>
+                  </TouchableScale>
+                ))}
+              </View>
+            )}
           </Animated.View>
 
           {/* Settings & Support */}
@@ -425,6 +482,41 @@ const styles = StyleSheet.create({
     marginTop: 6,
     lineHeight: 20
 },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  viewAllText: {
+    color: COLORS.primary,
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  ordersList: { gap: 10 },
+  orderCard: {
+    backgroundColor: COLORS.surfaceContainerLow,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  orderCardLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
+  orderIconBg: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: COLORS.teal100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orderShop: { fontSize: 14, fontWeight: '700', color: COLORS.onSurface },
+  orderMeta: { fontSize: 12, color: COLORS.slate500, marginTop: 2 },
+  orderCardRight: { alignItems: 'flex-end', gap: 6 },
+  orderAmount: { fontSize: 14, fontWeight: '700', color: COLORS.teal700 },
+  orderStatusDot: { width: 8, height: 8, borderRadius: 4 },
   ordersPlaceholder: {
     backgroundColor: COLORS.surfaceContainerLowest,
     borderRadius: 16,

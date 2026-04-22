@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AddressProvider } from './context/AddressContext';
 import { CartProvider } from './context/CartContext';
+import { initPushNotifications, setupNotificationListeners } from './services/NotificationService';
 
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
@@ -37,6 +38,13 @@ const Stack = createNativeStackNavigator();
 function RootNavigator() {
   const { user, loading } = useAuth();
 
+  // Register for push notifications once user is logged in
+  useEffect(() => {
+    if (user) {
+      initPushNotifications();
+    }
+  }, [user]);
+
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f9f9ff' }}>
@@ -62,7 +70,6 @@ function RootNavigator() {
 
       {/* App screens */}
       <Stack.Screen name="Main" component={MainTabs} />
-      {/* Shop screens slide up like a product sheet */}
       <Stack.Screen name="KiranaShop" component={KiranaShopScreen} options={{ animation: 'fade_from_bottom' }} />
       <Stack.Screen name="ShopDetail" component={ShopDetailScreen} options={{ animation: 'fade_from_bottom' }} />
       <Stack.Screen name="Cart" component={CartScreen} />
@@ -83,13 +90,27 @@ function RootNavigator() {
 }
 
 export default function App() {
+  const navigationRef = useRef<NavigationContainerRef<any>>(null);
+
+  useEffect(() => {
+    const cleanup = setupNotificationListeners((orderId) => {
+      // When user taps a notification, navigate to the relevant screen
+      if (orderId) {
+        navigationRef.current?.navigate('OrderTracking', { orderId });
+      } else {
+        navigationRef.current?.navigate('OrderHistory');
+      }
+    });
+    return cleanup;
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <AuthProvider>
           <AddressProvider>
             <CartProvider>
-              <NavigationContainer>
+              <NavigationContainer ref={navigationRef}>
                 <RootNavigator />
               </NavigationContainer>
             </CartProvider>

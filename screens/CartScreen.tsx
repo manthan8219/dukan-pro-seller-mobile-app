@@ -1,5 +1,6 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
+import { useCart } from '../context/CartContext';
 import {
   View,
   Text,
@@ -34,35 +35,6 @@ const theme = {
   outlineVariant: '#c1c6d7'
 };
 
-const CART_ITEMS = [
-  {
-    id: '1',
-    name: 'Fortune Sunlite Oil',
-    description: 'Refined Sunflower Oil, 1L',
-    price: '$12.50',
-    quantity: 1,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuClpTp-r5SyUsSvsXtp0huNHx_YeFclGw6t1rI253234Gu11ED2nFS7puHJBs8VMelqPY3X58AnhGx3Neo1Cud0wrUoU-FjG4V0rdO6l5NiRU5sCDGmFNvaaLX2CH9RUFPB0zTcH54veFzEcvxVqTZSCuOJ6e0uDEZq33JXbBQE1FAseVstIlsdnHMsNg_JEyBPjLL6TN5TXPQhvYB0UyjaNGY_IR8XGlqhp8uBJwyB5ztb9Rdkjq3BqP1kPpP_GFB1aktvZvmFyGlu',
-    actionType: 'remove'
-},
-  {
-    id: '2',
-    name: 'Tata Sampann Moong Dal',
-    description: 'Unpolished Moong Dal, 500g',
-    price: '$4.20',
-    quantity: 2,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBK71vi2dxkvlvhJfhtPJkvss8GqmwCjimL1m6_hd4LAs6kZ_o86WT-n0airqt_pBzoZPjNsmaEvvmOdLsT6NI4WkXz72mF2q5-y4_3xe9O3-cYFtK5Q5aEVpcqUGN37v8KT_9SN4dgMvvEvTZjDiSUZh4J28D06ntauT4bb4PYjEb5r7cUCH5IMbg56j-DCoXfump_aMq5TnrtZ-P0hq6cgCCrfB69gaGrf3rvj4r7zXfZoppvlF0Hkidr8qzciNAATtwwJE06Pvw5',
-    actionType: 'remove'
-},
-  {
-    id: '3',
-    name: 'MDH Haldi',
-    description: 'Turmeric Powder, 200g',
-    price: '$2.10',
-    quantity: 1,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBDXEtNxRUCq0iAvD9lmbcFXvW_g-ESEvhZIIm-2QO2Eq0OV5z6S61Zej_gcEFcyLlfo2K3EB5TCH1IZYvL9ML99Jqbk2Ldhgi0x04dckOIP57PowSZ01TbVIuj1rl3CvprL-lZ3zo0MFk25DGF0_KmMgQi3jTrz87FjTnjELW6C4mUFDhbbcjPdLYd3aKzegOUuSNQIfpyGvhDagbkoi-qZe-ZjBAEOBXQ8KhYYHcqxMG-aG2_8j1TX9X_YlmER8fvmkqaj_lLFuem',
-    actionType: 'delete'
-},
-];
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -108,6 +80,13 @@ interface CartScreenProps {
 }
 
 export default function CartScreen({ navigation }: CartScreenProps) {
+  const { cartItemsList, cartCount, cartTotal, updateCart } = useCart();
+
+  const DELIVERY_FEE = 50;
+  const TAX_RATE = 0.05;
+  const tax = cartTotal * TAX_RATE;
+  const total = cartTotal + DELIVERY_FEE + tax;
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.surface} />
@@ -123,7 +102,7 @@ export default function CartScreen({ navigation }: CartScreenProps) {
           <View>
             <MaterialIcons name="shopping-basket" size={24} color={theme.primary} />
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>3</Text>
+              <Text style={styles.badgeText}>{cartCount}</Text>
             </View>
           </View>
         </AnimatedPressable>
@@ -136,27 +115,35 @@ export default function CartScreen({ navigation }: CartScreenProps) {
         </Animated.View>
 
         <View style={styles.cartList}>
-          {CART_ITEMS.map((item, index) => (
-            <Animated.View key={item.id} entering={FadeInDown.duration(400).delay(200 + index * 100)} style={styles.cartItem}>
-              <View style={styles.itemImageContainer}>
-                <Image source={{ uri: item.image }} style={styles.itemImage} />
-              </View>
-              <View style={styles.itemDetails}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemDescription}>{item.description}</Text>
-                <Text style={styles.itemPrice}>{item.price}</Text>
-              </View>
-              <View style={styles.quantityControls}>
-                <AnimatedPressable style={styles.controlButton} onPress={() => {}}>
-                  <MaterialIcons name="add" size={16} color={theme.primary} />
-                </AnimatedPressable>
-                <Text style={styles.quantityText}>{item.quantity}</Text>
-                <AnimatedPressable style={styles.controlButton} onPress={() => {}}>
-                  <MaterialIcons name={item.actionType === 'delete' ? 'delete' : 'remove'} size={16} color={theme.primary} />
-                </AnimatedPressable>
-              </View>
+          {cartItemsList.length === 0 ? (
+            <Animated.View entering={FadeInDown.duration(400).delay(200)} style={styles.cartItem}>
+              <Text style={[styles.itemDescription, { textAlign: 'center', flex: 1 }]}>Your basket is empty. Add items from a shop.</Text>
             </Animated.View>
-          ))}
+          ) : (
+            cartItemsList.map((entry, index) => (
+              <Animated.View key={entry.product.id} entering={FadeInDown.duration(400).delay(200 + index * 100)} style={styles.cartItem}>
+                <View style={styles.itemImageContainer}>
+                  {entry.product.image ? (
+                    <Image source={{ uri: entry.product.image }} style={styles.itemImage} />
+                  ) : null}
+                </View>
+                <View style={styles.itemDetails}>
+                  <Text style={styles.itemName}>{entry.product.name}</Text>
+                  <Text style={styles.itemDescription}>{entry.product.desc}</Text>
+                  <Text style={styles.itemPrice}>₹{entry.product.price.toFixed(0)}</Text>
+                </View>
+                <View style={styles.quantityControls}>
+                  <AnimatedPressable style={styles.controlButton} onPress={() => updateCart(entry.product, 1)}>
+                    <MaterialIcons name="add" size={16} color={theme.primary} />
+                  </AnimatedPressable>
+                  <Text style={styles.quantityText}>{entry.quantity}</Text>
+                  <AnimatedPressable style={styles.controlButton} onPress={() => updateCart(entry.product, -1)}>
+                    <MaterialIcons name={entry.quantity === 1 ? 'delete' : 'remove'} size={16} color={theme.primary} />
+                  </AnimatedPressable>
+                </View>
+              </Animated.View>
+            ))
+          )}
         </View>
 
         <Animated.View entering={FadeInDown.duration(400).delay(600)} style={styles.upsellSection}>
@@ -175,19 +162,19 @@ export default function CartScreen({ navigation }: CartScreenProps) {
         <Animated.View entering={FadeInDown.duration(400).delay(700)} style={styles.priceBreakdown}>
           <View style={styles.priceRow}>
             <Text style={styles.priceLabel}>Subtotal</Text>
-            <Text style={styles.priceValue}>$23.00</Text>
+            <Text style={styles.priceValue}>₹{cartTotal.toFixed(0)}</Text>
           </View>
           <View style={styles.priceRow}>
             <Text style={styles.priceLabel}>Delivery Fee</Text>
-            <Text style={styles.priceValue}>$1.50</Text>
+            <Text style={styles.priceValue}>₹{DELIVERY_FEE.toFixed(0)}</Text>
           </View>
           <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>Tax</Text>
-            <Text style={styles.priceValueTax}>$0.85</Text>
+            <Text style={styles.priceLabel}>Tax (5%)</Text>
+            <Text style={styles.priceValueTax}>₹{tax.toFixed(0)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>$25.35</Text>
+            <Text style={styles.totalValue}>₹{total.toFixed(0)}</Text>
           </View>
         </Animated.View>
 

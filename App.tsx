@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AddressProvider } from './context/AddressContext';
+import { CartProvider } from './context/CartContext';
 
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
@@ -87,9 +88,11 @@ export default function App() {
       <SafeAreaProvider>
         <AuthProvider>
           <AddressProvider>
-            <NavigationContainer>
-              <RootNavigator />
-            </NavigationContainer>
+            <CartProvider>
+              <NavigationContainer>
+                <RootNavigator />
+              </NavigationContainer>
+            </CartProvider>
           </AddressProvider>
         </AuthProvider>
       </SafeAreaProvider>

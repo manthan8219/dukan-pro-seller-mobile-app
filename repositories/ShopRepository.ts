@@ -69,9 +69,10 @@ function mapToShop(dto: BackendShopDto): Shop {
  *   GET /shops/discover/nearby?latitude=&longitude=        → shops deliverable to a coordinate
  */
 export class ShopRepository {
-  /** All active shops — used when the user has no active address. */
+  /** Active shops (first page) — used when the user has no active address. */
   async getAll(): Promise<Shop[]> {
-    const dtos = await apiFetch<BackendShopDto[]>('/shops');
+    const res = await apiFetch<{ data: BackendShopDto[]; total: number } | BackendShopDto[]>('/shops?limit=50&offset=0');
+    const dtos = Array.isArray(res) ? res : res.data;
     return dtos.map(mapToShop);
   }
 

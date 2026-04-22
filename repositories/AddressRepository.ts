@@ -17,13 +17,20 @@ function getApiBaseUrlOrNull(): string | null {
   return url.replace(/\/$/, '');
 }
 
+// ——— Backend DTO shapes ———
+
 interface BackendAddressDto {
   id: string;
-  label: string;
-  street: string;
+  fullName: string;
+  phone: string;
+  line1: string;
+  line2?: string | null;
+  landmark?: string | null;
   city: string;
-  zip: string;
-  isActive: boolean;
+  pin: string;
+  tag: 'home' | 'office' | 'other';
+  label: string;
+  isDefault: boolean;
   latitude: number | null;
   longitude: number | null;
 }
@@ -31,15 +38,60 @@ interface BackendAddressDto {
 function mapDto(dto: BackendAddressDto): Address {
   return {
     id: dto.id,
-    label: dto.label,
-    street: dto.street,
+    fullName: dto.fullName ?? '',
+    phone: dto.phone ?? '',
+    label: dto.label || dto.tag,
+    street: dto.line1,
     city: dto.city,
-    zip: dto.zip ?? '',
-    isActive: dto.isActive,
+    zip: dto.pin,
+    isActive: dto.isDefault,
     latitude: dto.latitude ?? null,
     longitude: dto.longitude ?? null,
   };
 }
+
+function tagFromLabel(label: string): 'home' | 'office' | 'other' {
+  const l = label.toLowerCase();
+  if (l === 'home') return 'home';
+  if (l === 'office' || l === 'work') return 'office';
+  return 'other';
+}
+
+function buildCreateBody(form: AddressFormData, isActive: boolean): Record<string, unknown> {
+  const tag = tagFromLabel(form.label);
+  return {
+    fullName: form.fullName,
+    phone: form.phone,
+    line1: form.street,
+    city: form.city,
+    pin: form.zip,
+    tag,
+    // Only send label for "other" tags (backend ignores it for home/office)
+    ...(tag === 'other' ? { label: form.label } : {}),
+    setAsDefault: isActive,
+    ...(form.latitude != null ? { latitude: form.latitude } : {}),
+    ...(form.longitude != null ? { longitude: form.longitude } : {}),
+  };
+}
+
+function buildUpdateBody(patch: Partial<AddressFormData>): Record<string, unknown> {
+  const body: Record<string, unknown> = {};
+  if (patch.fullName != null) body.fullName = patch.fullName;
+  if (patch.phone != null) body.phone = patch.phone;
+  if (patch.street != null) body.line1 = patch.street;
+  if (patch.city != null) body.city = patch.city;
+  if (patch.zip != null) body.pin = patch.zip;
+  if (patch.label != null) {
+    const tag = tagFromLabel(patch.label);
+    body.tag = tag;
+    if (tag === 'other') body.label = patch.label;
+  }
+  if (patch.latitude != null) body.latitude = patch.latitude;
+  if (patch.longitude != null) body.longitude = patch.longitude;
+  return body;
+}
+
+// ——— API helper ———
 
 async function apiFetch<T>(baseUrl: string, path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${baseUrl}${path}`, {
@@ -69,7 +121,7 @@ async function apiFetch<T>(baseUrl: string, path: string, options?: RequestInit)
   return JSON.parse(text) as T;
 }
 
-// ——— Local (AsyncStorage) ———
+// ——— Local (AsyncStorage) fallback ———
 
 async function localGetAll(): Promise<Address[]> {
   try {
@@ -84,18 +136,12 @@ async function localGetAll(): Promise<Address[]> {
 async function localSaveAll(addresses: Address[]): Promise<void> {
   try {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(addresses));
-  } catch {
-    /* storage unavailable */
-  }
+  } catch { /* storage unavailable */ }
 }
 
 async function localCreate(form: AddressFormData, isActive: boolean): Promise<Address> {
   const addresses = await localGetAll();
-  const newAddress: Address = {
-    ...form,
-    id: generateId(),
-    isActive,
-  };
+  const newAddress: Address = { ...form, id: generateId(), isActive };
   let updated = [...addresses, newAddress];
   if (newAddress.isActive) {
     updated = updated.map((a) => ({ ...a, isActive: a.id === newAddress.id }));
@@ -136,26 +182,22 @@ function canAttemptRemote(): boolean {
 }
 
 /**
- * Persists delivery addresses on the backend when `/customers/:id/addresses` exists.
- * If the API is missing, unreachable, or returns an error, falls back to AsyncStorage
- * so add / edit / delete still work (same as pre-API behaviour).
+ * Persists delivery addresses on the backend.
  *
  * Remote endpoints:
- *   GET    /customers/:userId/addresses
- *   POST   /customers/:userId/addresses
- *   PATCH  /customers/:userId/addresses/:addressId
- *   DELETE /customers/:userId/addresses/:addressId
- *   PATCH  /customers/:userId/addresses/:addressId/activate
+ *   GET    /users/:userId/delivery-addresses
+ *   POST   /users/:userId/delivery-addresses
+ *   PATCH  /users/:userId/delivery-addresses/:addressId
+ *   DELETE /users/:userId/delivery-addresses/:addressId
+ *   (activate = PATCH with { setAsDefault: true })
  */
 export class AddressRepository {
   async getAll(): Promise<Address[]> {
     const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
-    if (!canAttemptRemote() || !uid) {
-      return localGetAll();
-    }
+    if (!canAttemptRemote() || !uid) return localGetAll();
     const baseUrl = getApiBaseUrlOrNull()!;
     try {
-      const dtos = await apiFetch<BackendAddressDto[]>(baseUrl, `/customers/${uid}/addresses`);
+      const dtos = await apiFetch<BackendAddressDto[]>(baseUrl, `/users/${uid}/delivery-addresses`);
       return dtos.map(mapDto);
     } catch {
       remoteAddressApiDown = true;
@@ -165,14 +207,12 @@ export class AddressRepository {
 
   async create(form: AddressFormData, isActive: boolean): Promise<Address> {
     const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
-    if (!canAttemptRemote() || !uid) {
-      return localCreate(form, isActive);
-    }
+    if (!canAttemptRemote() || !uid) return localCreate(form, isActive);
     const baseUrl = getApiBaseUrlOrNull()!;
     try {
-      const dto = await apiFetch<BackendAddressDto>(baseUrl, `/customers/${uid}/addresses`, {
+      const dto = await apiFetch<BackendAddressDto>(baseUrl, `/users/${uid}/delivery-addresses`, {
         method: 'POST',
-        body: JSON.stringify({ ...form, isActive }),
+        body: JSON.stringify(buildCreateBody(form, isActive)),
       });
       return mapDto(dto);
     } catch {
@@ -183,15 +223,14 @@ export class AddressRepository {
 
   async update(id: string, patch: Partial<AddressFormData>): Promise<Address> {
     const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
-    if (!canAttemptRemote() || !uid) {
-      return localUpdate(id, patch);
-    }
+    if (!canAttemptRemote() || !uid) return localUpdate(id, patch);
     const baseUrl = getApiBaseUrlOrNull()!;
     try {
-      const dto = await apiFetch<BackendAddressDto>(baseUrl, `/customers/${uid}/addresses/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(patch),
-      });
+      const dto = await apiFetch<BackendAddressDto>(
+        baseUrl,
+        `/users/${uid}/delivery-addresses/${id}`,
+        { method: 'PATCH', body: JSON.stringify(buildUpdateBody(patch)) },
+      );
       return mapDto(dto);
     } catch {
       remoteAddressApiDown = true;
@@ -201,13 +240,10 @@ export class AddressRepository {
 
   async remove(id: string): Promise<void> {
     const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
-    if (!canAttemptRemote() || !uid) {
-      await localRemove(id);
-      return;
-    }
+    if (!canAttemptRemote() || !uid) { await localRemove(id); return; }
     const baseUrl = getApiBaseUrlOrNull()!;
     try {
-      await apiFetch<void>(baseUrl, `/customers/${uid}/addresses/${id}`, { method: 'DELETE' });
+      await apiFetch<void>(baseUrl, `/users/${uid}/delivery-addresses/${id}`, { method: 'DELETE' });
     } catch {
       remoteAddressApiDown = true;
       await localRemove(id);
@@ -216,16 +252,17 @@ export class AddressRepository {
 
   async activate(id: string): Promise<Address[]> {
     const uid = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
-    if (!canAttemptRemote() || !uid) {
-      return localActivate(id);
-    }
+    if (!canAttemptRemote() || !uid) return localActivate(id);
     const baseUrl = getApiBaseUrlOrNull()!;
     try {
-      const dtos = await apiFetch<BackendAddressDto[]>(
+      // Backend has no separate activate endpoint — PATCH with setAsDefault: true
+      await apiFetch<BackendAddressDto>(
         baseUrl,
-        `/customers/${uid}/addresses/${id}/activate`,
-        { method: 'PATCH' },
+        `/users/${uid}/delivery-addresses/${id}`,
+        { method: 'PATCH', body: JSON.stringify({ setAsDefault: true }) },
       );
+      // Fetch fresh list so isDefault flags are accurate
+      const dtos = await apiFetch<BackendAddressDto[]>(baseUrl, `/users/${uid}/delivery-addresses`);
       return dtos.map(mapDto);
     } catch {
       remoteAddressApiDown = true;

@@ -26,6 +26,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { fetchShopProducts, type UiShopProduct } from '../utils/shopProductsApi';
+import { useCart } from '../context/CartContext';
 
 const { width } = Dimensions.get('window');
 
@@ -161,7 +162,7 @@ export default function ShopDetailScreen({ navigation, route }: any) {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
-  const [cart, setCart] = useState<Record<string, number>>({});
+  const { updateCart, getQuantity, cartCount, cartTotal } = useCart();
   const [isFavorite, setIsFavorite] = useState(false);
 
   // ── Fetch products ─────────────────────────────────────────────────────
@@ -205,21 +206,6 @@ export default function ShopDetailScreen({ navigation, route }: any) {
     });
   }, [products, activeFilter, searchQuery]);
 
-  const cartItemsCount = Object.values(cart).reduce((a, b) => a + b, 0);
-  const cartTotal = Object.entries(cart).reduce((total, [id, count]) => {
-    const p = products.find((x) => x.id === id);
-    return total + (p ? p.price * count : 0);
-  }, 0);
-
-  const handleUpdateCart = (id: string, delta: number) => {
-    setCart((prev) => {
-      const next = (prev[id] ?? 0) + delta;
-      const updated = { ...prev };
-      if (next <= 0) delete updated[id];
-      else updated[id] = next;
-      return updated;
-    });
-  };
 
   const cartScale = useSharedValue(1);
   const cartAnimatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: cartScale.value }] }));
@@ -339,11 +325,11 @@ export default function ShopDetailScreen({ navigation, route }: any) {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  quantity={cart[product.id] ?? 0}
+                  quantity={getQuantity(product.id)}
                   index={index}
-                  onAdd={() => handleUpdateCart(product.id, 1)}
-                  onInc={() => handleUpdateCart(product.id, 1)}
-                  onDec={() => handleUpdateCart(product.id, -1)}
+                  onAdd={() => updateCart(product, 1)}
+                  onInc={() => updateCart(product, 1)}
+                  onDec={() => updateCart(product, -1)}
                 />
               ))
             )}
@@ -367,7 +353,7 @@ export default function ShopDetailScreen({ navigation, route }: any) {
         </View>
 
         {/* ── Sticky cart bar ── */}
-        {cartItemsCount > 0 && (
+        {cartCount > 0 && (
           <Animated.View entering={FadeInDown.springify()} style={[styles.cartBarContainer, cartAnimatedStyle]}>
             <Pressable
               onPressIn={() => { cartScale.value = withTiming(0.97, { duration: 80 }); }}
@@ -378,7 +364,7 @@ export default function ShopDetailScreen({ navigation, route }: any) {
               <View style={styles.cartButtonLeft}>
                 <View style={styles.cartItemCountBadge}>
                   <Text style={styles.cartItemCountText}>
-                    {cartItemsCount} {cartItemsCount === 1 ? 'Item' : 'Items'}
+                    {cartCount} {cartCount === 1 ? 'Item' : 'Items'}
                   </Text>
                 </View>
                 <Text style={styles.cartViewText}>View Your Cart</Text>

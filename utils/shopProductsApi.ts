@@ -52,9 +52,12 @@ export function normalizeShopProductRow(row: unknown): UiShopProduct | null {
   const r = asRecord(row);
   if (!r) return null;
 
+  // 'id' = shop-product listing UUID — what the orders API expects as shopProductId.
+  // Must take precedence over 'productId' which is the catalog product UUID.
   const id =
-    pickString(r, 'productId', 'product_id', 'id') ||
-    (typeof r.id === 'string' ? r.id : typeof r.id === 'number' ? String(r.id) : '');
+    (typeof r.id === 'string' && r.id ? r.id : '') ||
+    (typeof r.id === 'number' ? String(r.id) : '') ||
+    pickString(r, 'productId', 'product_id');
   const name = pickString(r, 'productName', 'product_name', 'name', 'title');
   if (!id || !name) return null;
 

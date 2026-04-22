@@ -1,0 +1,53 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const BACKEND_USER_ID_KEY = '@buyer:backendUserId';
+
+function getApiBaseUrl(): string {
+  const url = process.env.EXPO_PUBLIC_API_URL?.trim();
+  if (!url) throw new Error('EXPO_PUBLIC_API_URL is not configured.');
+  return url.replace(/\/$/, '');
+}
+
+export interface PlaceOrderItem {
+  shopProductId: string;
+  quantity: number;
+}
+
+export type PaymentMethod = 'upi' | 'card' | 'cod';
+
+export interface PlaceOrderParams {
+  deliveryAddressId: string;
+  paymentMethod: PaymentMethod;
+  items: PlaceOrderItem[];
+}
+
+export interface OrderResponse {
+  id: string;
+  status: string;
+  [key: string]: unknown;
+}
+
+export async function placeOrder(params: PlaceOrderParams): Promise<OrderResponse[]> {
+  const userId = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
+  if (!userId) throw new Error('Not logged in. Please sign in and try again.');
+
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(`${baseUrl}/users/${userId}/orders/checkout`, {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  });
+
+  const text = await res.text();
+  if (!res.ok) {
+    let message = `Order failed (${res.status})`;
+    try {
+      const data = JSON.parse(text) as { message?: string | string[] };
+      if (typeof data.message === 'string') message = data.message;
+      else if (Array.isArray(data.message)) message = data.message.join('. ');
+    } catch { /* use default */ }
+    throw new Error(message);
+  }
+
+  return JSON.parse(text) as OrderResponse[];
+}

@@ -44,6 +44,8 @@ function resolveLabel(tag: LabelTag, otherText: string): string {
 }
 
 const EMPTY_FORM: AddressFormData = {
+  fullName: '',
+  phone: '',
   label: '',
   street: '',
   city: '',
@@ -84,6 +86,8 @@ export default function AddressScreen({ navigation }: any) {
     setLabelTag(tag);
     setOtherLabelText(otherText);
     setForm({
+      fullName: address.fullName,
+      phone: address.phone,
       label: address.label,
       street: address.street,
       city: address.city,
@@ -139,8 +143,12 @@ export default function AddressScreen({ navigation }: any) {
       Alert.alert('Missing label', 'Please enter a name for this address.');
       return;
     }
+    if (!form.fullName.trim() || !form.phone.trim()) {
+      Alert.alert('Missing fields', 'Please enter your full name and phone number.');
+      return;
+    }
     if (!form.street.trim() || !form.city.trim() || !form.zip.trim()) {
-      Alert.alert('Missing fields', 'Please fill in all fields before saving.');
+      Alert.alert('Missing fields', 'Please fill in street, city, and PIN code.');
       return;
     }
     const payload: AddressFormData = { ...form, label: resolvedLabel };
@@ -245,8 +253,11 @@ export default function AddressScreen({ navigation }: any) {
                           )}
                         </View>
                         <Text style={styles.addressText}>
-                          {address.street}{'\n'}{address.city}, {address.zip}
+                          {address.fullName ? `${address.fullName}\n` : ''}{address.street}{'\n'}{address.city}, {address.zip}
                         </Text>
+                        {!!address.phone && (
+                          <Text style={styles.addressPhone}>{address.phone}</Text>
+                        )}
                         {!isActive && (
                           <TouchableOpacity onPress={() => setActiveAddress(address.id)}>
                             <Text style={styles.setActiveLink}>Set as active</Text>
@@ -303,6 +314,25 @@ export default function AddressScreen({ navigation }: any) {
               <Text style={styles.dividerText}>or enter manually</Text>
               <View style={styles.divider} />
             </View>
+
+            <Text style={styles.label}>Full Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Rahul Sharma"
+              placeholderTextColor="#94a3b8"
+              value={form.fullName}
+              onChangeText={(v) => setForm((f) => ({ ...f, fullName: v }))}
+            />
+
+            <Text style={styles.label}>Phone Number</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="+91 98765 43210"
+              placeholderTextColor="#94a3b8"
+              value={form.phone}
+              onChangeText={(v) => setForm((f) => ({ ...f, phone: v }))}
+              keyboardType="phone-pad"
+            />
 
             <Text style={styles.label}>Label</Text>
             <View style={styles.labelTagRow}>
@@ -457,6 +487,7 @@ const styles = StyleSheet.create({
   },
   gpsBadgeText: { color: '#0f766e', fontSize: 10, fontWeight: '700' },
   addressText: { color: '#475569', fontSize: 14, lineHeight: 22 },
+  addressPhone: { color: '#94a3b8', fontSize: 13, marginTop: 2 },
   setActiveLink: { marginTop: 8, fontSize: 13, fontWeight: '600', color: '#006670' },
   cardActions: { flexDirection: 'row', gap: 4, marginLeft: 8 },
   actionButton: { padding: 6 },

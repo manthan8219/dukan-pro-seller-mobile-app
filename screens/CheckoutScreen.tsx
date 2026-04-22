@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,9 @@ import Animated, {
   withTiming,
   useSharedValue
 } from 'react-native-reanimated';
+import { useAddress } from '../context/AddressContext';
+import { useCart } from '../context/CartContext';
+import { placeOrder, type PaymentMethod } from '../services/OrderService';
 
 // Colors from the provided Tailwind config
 const colors = {
@@ -68,10 +71,90 @@ const ScaleButton = ({ children, onPress, style, activeScale = 0.95 }: any) => {
   );
 };
 
+function generateDeliverySlots() {
+  const now = new Date();
+  const slots: { id: string; day: string; date: Date; time: string; startHour: number }[] = [];
+  const windows = [
+    { time: '9 AM – 11 AM', startHour: 9 },
+    { time: '11 AM – 1 PM', startHour: 11 },
+    { time: '1 PM – 3 PM', startHour: 13 },
+    { time: '3 PM – 5 PM', startHour: 15 },
+    { time: '5 PM – 7 PM', startHour: 17 },
+    { time: '7 PM – 9 PM', startHour: 19 },
+  ];
+
+  // Today slots — only windows that haven't started yet (need 1hr buffer)
+  windows.forEach((w, i) => {
+    const slotStart = new Date(now);
+    slotStart.setHours(w.startHour, 0, 0, 0);
+    if (slotStart.getTime() - now.getTime() > 60 * 60 * 1000) {
+      slots.push({ id: `today-${i}`, day: 'Today', date: slotStart, time: w.time, startHour: w.startHour });
+    }
+  });
+
+  // Tomorrow slots — all windows
+  windows.forEach((w, i) => {
+    const slotStart = new Date(now);
+    slotStart.setDate(slotStart.getDate() + 1);
+    slotStart.setHours(w.startHour, 0, 0, 0);
+    slots.push({ id: `tomorrow-${i}`, day: 'Tomorrow', date: slotStart, time: w.time, startHour: w.startHour });
+  });
+
+  return slots;
+}
+
+function addressIcon(label: string): 'home' | 'work' | 'location-on' {
+  const l = label.toLowerCase();
+  if (l.includes('home')) return 'home';
+  if (l.includes('office') || l.includes('work')) return 'work';
+  return 'location-on';
+}
+
 export default function CheckoutScreen({ navigation }: any) {
-  const [selectedAddress, setSelectedAddress] = useState('home');
-  const [selectedSlot, setSelectedSlot] = useState('slot-2');
+  const { addresses, activeAddress } = useAddress();
+  const { cartItemsList, cartCount, cartTotal } = useCart();
+
+  const deliverySlots = useMemo(() => generateDeliverySlots(), []);
+
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
+    activeAddress?.id ?? addresses[0]?.id ?? null,
+  );
+  const [selectedSlot, setSelectedSlot] = useState<string>(deliverySlots[0]?.id ?? '');
   const [selectedPayment, setSelectedPayment] = useState('upi');
+  const [placing, setPlacing] = useState(false);
+
+  const PACKAGING_FEE = 20;
+  const checkoutTotal = cartTotal + PACKAGING_FEE;
+
+  const paymentMethodMap: Record<string, PaymentMethod> = {
+    upi: 'upi',
+    cards: 'card',
+    cod: 'cod',
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!selectedAddressId) {
+      Alert.alert('No Address', 'Please select a delivery address before placing your order.');
+      return;
+    }
+    if (cartItemsList.length === 0) {
+      Alert.alert('Empty Cart', 'Add items to your cart before placing an order.');
+      return;
+    }
+    setPlacing(true);
+    try {
+      await placeOrder({
+        deliveryAddressId: selectedAddressId,
+        paymentMethod: paymentMethodMap[selectedPayment] ?? 'upi',
+        items: cartItemsList.map((e) => ({ shopProductId: e.product.id, quantity: e.quantity })),
+      });
+      navigation.navigate('OrderTracking');
+    } catch (err) {
+      Alert.alert('Order Failed', err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setPlacing(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -117,73 +200,49 @@ export default function CheckoutScreen({ navigation }: any) {
             </View>
 
             <View style={styles.addressContainer}>
-              {/* Home Address */}
-              <ScaleButton
-                onPress={() => setSelectedAddress('home')}
-                style={[
-                  styles.addressCard,
-                  selectedAddress === 'home'
-                    ? styles.addressCardSelected
-                    : styles.addressCardUnselected,
-                ]}
-              >
-                <View style={styles.addressCardHeader}>
-                  <View
-                    style={[
-                      styles.addressIconContainer,
-                      { backgroundColor: `${colors.primary}1A` },
-                    ]}
-                  >
-                    <MaterialIcons name="home" size={20} color={colors.primary} />
-                  </View>
-                  {selectedAddress === 'home' && (
-                    <View style={styles.selectedBadge}>
-                      <Text style={styles.selectedBadgeText}>SELECTED</Text>
-                    </View>
-                  )}
+              {addresses.length === 0 ? (
+                <View style={[styles.addressCard, styles.addressCardUnselected, { alignItems: 'center', padding: 24 }]}>
+                  <MaterialIcons name="location-off" size={32} color={colors.outline} />
+                  <Text style={[styles.addressDesc, { textAlign: 'center', marginTop: 8 }]}>
+                    No saved addresses. Tap "Add New" to add one.
+                  </Text>
                 </View>
-                <Text style={styles.addressTitle}>Home</Text>
-                <Text style={styles.addressDesc}>
-                  452 Azure Heights, West Wing, Sky Garden District, Bangalore - 560001
-                </Text>
-                <Text style={styles.addressPhone}>+91 98765 43210</Text>
-              </ScaleButton>
-
-              {/* Office Address */}
-              <ScaleButton
-                onPress={() => setSelectedAddress('office')}
-                style={[
-                  styles.addressCard,
-                  selectedAddress === 'office'
-                    ? styles.addressCardSelected
-                    : styles.addressCardUnselected,
-                ]}
-              >
-                <View style={styles.addressCardHeader}>
-                  <View
-                    style={[
-                      styles.addressIconContainer,
-                      { backgroundColor: colors.surfaceContainerHighest },
-                    ]}
-                  >
-                    <MaterialIcons
-                      name="work"
-                      size={20}
-                      color={colors.onSurfaceVariant}
-                    />
-                  </View>
-                  {selectedAddress === 'office' && (
-                    <View style={styles.selectedBadge}>
-                      <Text style={styles.selectedBadgeText}>SELECTED</Text>
-                    </View>
-                  )}
-                </View>
-                <Text style={styles.addressTitle}>Office</Text>
-                <Text style={styles.addressDesc}>
-                  Tech Park One, Block C, Level 4, Outer Ring Road, Bangalore - 560103
-                </Text>
-                <Text style={styles.addressPhone}>+91 98765 43210</Text>
-              </ScaleButton>
+              ) : (
+                addresses.map((addr) => {
+                  const isSelected = selectedAddressId === addr.id;
+                  const icon = addressIcon(addr.label);
+                  return (
+                    <ScaleButton
+                      key={addr.id}
+                      onPress={() => setSelectedAddressId(addr.id)}
+                      style={[
+                        styles.addressCard,
+                        isSelected ? styles.addressCardSelected : styles.addressCardUnselected,
+                      ]}
+                    >
+                      <View style={styles.addressCardHeader}>
+                        <View
+                          style={[
+                            styles.addressIconContainer,
+                            { backgroundColor: isSelected ? `${colors.primary}1A` : colors.surfaceContainerHighest },
+                          ]}
+                        >
+                          <MaterialIcons name={icon} size={20} color={isSelected ? colors.primary : colors.onSurfaceVariant} />
+                        </View>
+                        {isSelected && (
+                          <View style={styles.selectedBadge}>
+                            <Text style={styles.selectedBadgeText}>SELECTED</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text style={styles.addressTitle}>{addr.label}</Text>
+                      <Text style={styles.addressDesc}>
+                        {[addr.street, addr.city, addr.zip].filter(Boolean).join(', ')}
+                      </Text>
+                    </ScaleButton>
+                  );
+                })
+              )}
             </View>
           </View>
 
@@ -201,90 +260,38 @@ export default function CheckoutScreen({ navigation }: any) {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.slotsScrollContainer}
             >
-              {[
-                {
-                  id: 'slot-1',
-                  day: 'Today',
-                  time: '10 AM - 12 PM',
-                  status: 'Available',
-                  type: 'normal'
-},
-                {
-                  id: 'slot-2',
-                  day: 'Today',
-                  time: '2 PM - 4 PM',
-                  status: 'Fast Delivery',
-                  type: 'selected'
-},
-                {
-                  id: 'slot-3',
-                  day: 'Today',
-                  time: '6 PM - 8 PM',
-                  status: 'Available',
-                  type: 'normal'
-},
-                {
-                  id: 'slot-4',
-                  day: 'Tomorrow',
-                  time: '8 AM - 10 AM',
-                  status: 'Next Day',
-                  type: 'normal'
-},
-              ].map((slot) => {
-                const isSelected = selectedSlot === slot.id;
-                return (
-                  <ScaleButton
-                    key={slot.id}
-                    activeScale={0.92}
-                    onPress={() => setSelectedSlot(slot.id)}
-                    style={[
-                      styles.slotCard,
-                      isSelected ? styles.slotCardSelected : styles.slotCardNormal,
-                      !isSelected && { opacity: 0.8 },
-                    ]}
-                  >
-                    <View
+              {deliverySlots.length === 0 ? (
+                <Text style={[styles.addressDesc, { paddingHorizontal: 8 }]}>No slots available today. Try tomorrow.</Text>
+              ) : (
+                deliverySlots.map((slot, idx) => {
+                  const isSelected = selectedSlot === slot.id;
+                  const status = slot.day === 'Today' && idx === 0 ? 'Earliest' : slot.day === 'Tomorrow' ? 'Next Day' : 'Available';
+                  return (
+                    <ScaleButton
+                      key={slot.id}
+                      activeScale={0.92}
+                      onPress={() => setSelectedSlot(slot.id)}
                       style={[
-                        styles.slotDayBadge,
-                        isSelected
-                          ? styles.slotDayBadgeSelected
-                          : styles.slotDayBadgeNormal,
+                        styles.slotCard,
+                        isSelected ? styles.slotCardSelected : styles.slotCardNormal,
+                        !isSelected && { opacity: 0.8 },
                       ]}
                     >
-                      <Text
-                        style={[
-                          styles.slotDayText,
-                          isSelected
-                            ? styles.slotDayTextSelected
-                            : styles.slotDayTextNormal,
-                        ]}
-                      >
-                        {slot.day}
+                      <View style={[styles.slotDayBadge, isSelected ? styles.slotDayBadgeSelected : styles.slotDayBadgeNormal]}>
+                        <Text style={[styles.slotDayText, isSelected ? styles.slotDayTextSelected : styles.slotDayTextNormal]}>
+                          {slot.day}
+                        </Text>
+                      </View>
+                      <Text style={[styles.slotTimeText, isSelected ? styles.slotTimeTextSelected : styles.slotTimeTextNormal]}>
+                        {slot.time}
                       </Text>
-                    </View>
-                    <Text
-                      style={[
-                        styles.slotTimeText,
-                        isSelected
-                          ? styles.slotTimeTextSelected
-                          : styles.slotTimeTextNormal,
-                      ]}
-                    >
-                      {slot.time}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.slotStatusText,
-                        isSelected
-                          ? styles.slotStatusTextSelected
-                          : styles.slotStatusTextNormal,
-                      ]}
-                    >
-                      {slot.status}
-                    </Text>
-                  </ScaleButton>
-                );
-              })}
+                      <Text style={[styles.slotStatusText, isSelected ? styles.slotStatusTextSelected : styles.slotStatusTextNormal]}>
+                        {status}
+                      </Text>
+                    </ScaleButton>
+                  );
+                })
+              )}
             </ScrollView>
           </View>
 
@@ -369,8 +376,8 @@ export default function CheckoutScreen({ navigation }: any) {
             </View>
             <View style={styles.summaryCard}>
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Items Subtotal (8)</Text>
-                <Text style={styles.summaryValue}>₹1,240.00</Text>
+                <Text style={styles.summaryLabel}>Items Subtotal ({cartCount})</Text>
+                <Text style={styles.summaryValue}>₹{cartTotal.toFixed(0)}</Text>
               </View>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Delivery Fee</Text>
@@ -383,7 +390,7 @@ export default function CheckoutScreen({ navigation }: any) {
                   <Text style={styles.summaryLabel}>Packaging Charges</Text>
                   <MaterialIcons name="info" size={14} color={colors.outline} />
                 </View>
-                <Text style={styles.summaryValue}>₹20.00</Text>
+                <Text style={styles.summaryValue}>₹{PACKAGING_FEE}.00</Text>
               </View>
 
               <View style={styles.summaryDivider} />
@@ -391,13 +398,7 @@ export default function CheckoutScreen({ navigation }: any) {
               <View style={styles.summaryFooter}>
                 <View>
                   <Text style={styles.totalLabel}>Total Amount</Text>
-                  <Text style={styles.totalValue}>₹1,260.00</Text>
-                </View>
-                <View style={styles.savingsContainer}>
-                  <Text style={styles.savingsText}>
-                    <MaterialIcons name="savings" size={14} color={colors.secondary} />
-                    {' Saved ₹145 today'}
-                  </Text>
+                  <Text style={styles.totalValue}>₹{checkoutTotal.toFixed(0)}</Text>
                 </View>
               </View>
             </View>
@@ -410,7 +411,9 @@ export default function CheckoutScreen({ navigation }: any) {
             <View style={styles.selectedPaymentInfo}>
               <Text style={styles.selectedPaymentLabel}>Selected Payment</Text>
               <View style={styles.selectedPaymentValueContainer}>
-                <Text style={styles.selectedPaymentValue}>UPI Wallet</Text>
+                <Text style={styles.selectedPaymentValue}>
+                  {selectedPayment === 'upi' ? 'UPI Wallet' : selectedPayment === 'cards' ? 'Card' : 'Cash on Delivery'}
+                </Text>
                 <MaterialIcons
                   name="expand-more"
                   size={16}
@@ -418,9 +421,15 @@ export default function CheckoutScreen({ navigation }: any) {
                 />
               </View>
             </View>
-            <ScaleButton style={styles.placeOrderButton} onPress={() => navigation.navigate('OrderTracking')}>
+            <ScaleButton
+              style={[styles.placeOrderButton, placing && { opacity: 0.7 }]}
+              onPress={handlePlaceOrder}
+              activeScale={placing ? 1 : 0.95}
+            >
               <MaterialIcons name="shopping-bag" size={20} color={colors.onPrimary} />
-              <Text style={styles.placeOrderText}>Place Order • ₹1,260.00</Text>
+              <Text style={styles.placeOrderText}>
+                {placing ? 'Placing Order…' : `Place Order • ₹${checkoutTotal.toFixed(0)}`}
+              </Text>
             </ScaleButton>
           </View>
         </View>

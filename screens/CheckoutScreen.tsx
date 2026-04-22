@@ -112,7 +112,7 @@ function addressIcon(label: string): 'home' | 'work' | 'location-on' {
 
 export default function CheckoutScreen({ navigation }: any) {
   const { addresses, activeAddress } = useAddress();
-  const { cartItemsList, cartCount, cartTotal } = useCart();
+  const { cartItemsList, cartCount, cartTotal, clearCart } = useCart();
 
   const deliverySlots = useMemo(() => generateDeliverySlots(), []);
 
@@ -147,6 +147,7 @@ export default function CheckoutScreen({ navigation }: any) {
         paymentMethod: paymentMethodMap[selectedPayment] ?? 'upi',
         items: cartItemsList.map((e) => ({ shopProductId: e.product.id, quantity: e.quantity })),
       });
+      clearCart();
       navigation.navigate('OrderTracking', { orderId: orders[0]?.id });
     } catch (err) {
       Alert.alert('Order Failed', err instanceof Error ? err.message : 'Something went wrong. Please try again.');

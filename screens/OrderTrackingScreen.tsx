@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { getOrders, type OrderResponse } from '../services/OrderService';
+import { getOrder, getOrders, type OrderResponse } from '../services/OrderService';
 
 const colors = {
   primary: '#006670',
@@ -63,11 +63,13 @@ export default function OrderTrackingScreen({ navigation, route }: Props) {
 
   useEffect(() => {
     if (!orderId) return;
-    getOrders()
-      .then((orders) => {
-        const found = orders.find((o) => o.id === orderId) ?? orders[0] ?? null;
-        setOrder(found);
+    // Try single-order endpoint first (includes full items), fall back to list search
+    getOrder(orderId)
+      .then((single) => {
+        if (single) return single;
+        return getOrders().then((orders) => orders.find((o) => o.id === orderId) ?? orders[0] ?? null);
       })
+      .then(setOrder)
       .catch((e) => setError(e instanceof Error ? e.message : 'Could not load order'))
       .finally(() => setLoading(false));
   }, [orderId]);
@@ -165,6 +167,37 @@ export default function OrderTrackingScreen({ navigation, route }: Props) {
             </Animated.View>
           )}
 
+          {/* Items Ordered — shown before timeline so it's never missed */}
+          {order && order.items.length > 0 && (
+            <Animated.View entering={FadeInDown.duration(400).delay(200)} style={styles.itemsCard}>
+              <Text style={styles.sectionTitle}>Items Ordered</Text>
+              {order.items.map((item, idx) => (
+                <View key={item.id} style={[styles.itemRow, idx === order.items.length - 1 && { borderBottomWidth: 0 }]}>
+                  <View style={styles.itemLeft}>
+                    <View style={styles.itemQtyBadge}>
+                      <Text style={styles.itemQtyBadgeText}>{item.quantity}×</Text>
+                    </View>
+                    <Text style={styles.itemName} numberOfLines={2}>{item.productNameSnapshot}</Text>
+                  </View>
+                  <View style={styles.itemRight}>
+                    <Text style={styles.itemUnitPrice}>₹{(item.unitPriceMinor / 100).toFixed(0)} each</Text>
+                    <Text style={styles.itemPrice}>₹{(item.lineTotalMinor / 100).toFixed(0)}</Text>
+                  </View>
+                </View>
+              ))}
+              <View style={styles.itemsTotalRow}>
+                <Text style={styles.itemsTotalLabel}>Items Total</Text>
+                <Text style={styles.itemsTotalValue}>₹{(order.itemsSubtotalMinor / 100).toFixed(0)}</Text>
+              </View>
+              {order.deliveryFeeMinor > 0 && (
+                <View style={[styles.itemsTotalRow, { marginTop: 4 }]}>
+                  <Text style={[styles.itemsTotalLabel, { fontWeight: '400', color: colors.outline }]}>Delivery Fee</Text>
+                  <Text style={[styles.itemsTotalValue, { fontWeight: '600', color: colors.outline }]}>₹{(order.deliveryFeeMinor / 100).toFixed(0)}</Text>
+                </View>
+              )}
+            </Animated.View>
+          )}
+
           {/* Status timeline */}
           {isCancelled ? (
             <Animated.View entering={FadeInDown.duration(400).delay(200)} style={styles.timelineCard}>
@@ -211,22 +244,6 @@ export default function OrderTrackingScreen({ navigation, route }: Props) {
                   </View>
                 );
               })}
-            </Animated.View>
-          )}
-
-          {/* Item list */}
-          {order && order.items.length > 0 && (
-            <Animated.View entering={FadeInDown.duration(400).delay(300)} style={styles.itemsCard}>
-              <Text style={styles.timelineTitle}>Items Ordered</Text>
-              {order.items.map((item) => (
-                <View key={item.id} style={styles.itemRow}>
-                  <Text style={styles.itemName} numberOfLines={2}>{item.productNameSnapshot}</Text>
-                  <View style={styles.itemRight}>
-                    <Text style={styles.itemQty}>×{item.quantity}</Text>
-                    <Text style={styles.itemPrice}>₹{(item.lineTotalMinor / 100).toFixed(0)}</Text>
-                  </View>
-                </View>
-              ))}
             </Animated.View>
           )}
 
@@ -326,6 +343,8 @@ const styles = StyleSheet.create({
   stepLabelPending: { color: colors.outline, fontWeight: '500' },
   stepDesc: { fontSize: 13, color: colors.onSurfaceVariant },
 
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: colors.onSurface, marginBottom: 16 },
+
   itemsCard: {
     backgroundColor: colors.surfaceContainerLowest,
     borderRadius: 16,
@@ -336,15 +355,35 @@ const styles = StyleSheet.create({
   itemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingVertical: 10,
+    alignItems: 'center',
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.surfaceContainerLow,
   },
-  itemName: { fontSize: 14, color: colors.onSurface, flex: 1, marginRight: 12 },
+  itemLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: 12, marginRight: 12 },
+  itemQtyBadge: {
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    minWidth: 32,
+    alignItems: 'center',
+  },
+  itemQtyBadgeText: { fontSize: 13, fontWeight: '700', color: colors.primary },
+  itemName: { fontSize: 14, color: colors.onSurface, flex: 1 },
   itemRight: { alignItems: 'flex-end', gap: 2 },
-  itemQty: { fontSize: 12, color: colors.outline },
+  itemUnitPrice: { fontSize: 11, color: colors.outline },
   itemPrice: { fontSize: 14, fontWeight: '700', color: colors.primary },
+  itemsTotalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceContainerLow,
+  },
+  itemsTotalLabel: { fontSize: 14, fontWeight: '700', color: colors.onSurface },
+  itemsTotalValue: { fontSize: 14, fontWeight: '700', color: colors.primary },
 
   homeButton: {
     backgroundColor: colors.primary,

@@ -46,6 +46,26 @@ export interface OrderResponse {
   items: OrderItemResponse[];
 }
 
+export async function getOrder(orderId: string): Promise<OrderResponse | null> {
+  const userId = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
+  if (!userId) throw new Error('Not logged in. Please sign in and try again.');
+
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(`${baseUrl}/users/${userId}/orders/${orderId}`, {
+    headers: { Accept: 'application/json' },
+  });
+
+  if (res.status === 404) return null;
+
+  const text = await res.text();
+  if (!res.ok) {
+    // Fall back to list search if single-order endpoint doesn't exist
+    return null;
+  }
+
+  return JSON.parse(text) as OrderResponse;
+}
+
 export async function getOrders(): Promise<OrderResponse[]> {
   const userId = await AsyncStorage.getItem(BACKEND_USER_ID_KEY);
   if (!userId) throw new Error('Not logged in. Please sign in and try again.');

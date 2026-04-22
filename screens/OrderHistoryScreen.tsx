@@ -77,7 +77,7 @@ export default function OrderHistoryScreen({ navigation }: any) {
 
             return (
               <Animated.View key={order.id} entering={FadeInDown.delay(index * 80).springify()}>
-                <TouchableOpacity style={styles.orderCard} activeOpacity={0.8}>
+                <TouchableOpacity style={styles.orderCard} activeOpacity={0.8} onPress={() => navigation.navigate('OrderTracking', { orderId: order.id })}>
                   <View style={styles.orderTop}>
                     <View style={styles.orderIconBg}>
                       <MaterialIcons name="storefront" size={24} color="#006670" />
@@ -88,7 +88,10 @@ export default function OrderHistoryScreen({ navigation }: any) {
                         {formatDate(order.createdAt)} · {itemCount} {itemCount === 1 ? 'item' : 'items'}
                       </Text>
                     </View>
-                    <Text style={styles.orderAmount}>{formatAmount(order.itemsSubtotalMinor)}</Text>
+                    <View style={{ alignItems: 'flex-end', gap: 4 }}>
+                      <Text style={styles.orderAmount}>{formatAmount(order.itemsSubtotalMinor)}</Text>
+                      <MaterialIcons name="chevron-right" size={18} color="#94a3b8" />
+                    </View>
                   </View>
 
                   {/* Item snapshots */}

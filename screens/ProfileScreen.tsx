@@ -209,7 +209,7 @@ export default function ProfileScreen({ navigation }: any) {
                   <TouchableScale
                     key={order.id}
                     style={styles.orderCard}
-                    onPress={() => navigation.navigate('OrderHistory')}
+                    onPress={() => navigation.navigate('OrderTracking', { orderId: order.id })}
                   >
                     <View style={styles.orderCardLeft}>
                       <View style={styles.orderIconBg}>

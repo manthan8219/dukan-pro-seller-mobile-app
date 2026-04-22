@@ -380,17 +380,18 @@ export default function CheckoutScreen({ navigation }: any) {
                 <Text style={styles.summaryValue}>₹{cartTotal.toFixed(0)}</Text>
               </View>
               <View style={styles.summaryRow}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                  <Text style={styles.summaryLabel}>Delivery Fee</Text>
-                </View>
-                <Text style={styles.summaryValue}>Calculated by shop</Text>
+                <Text style={styles.summaryLabel}>Delivery Fee</Text>
+                <Text style={[styles.summaryValue, { color: colors.outline, fontStyle: 'italic' }]}>Added by shop</Text>
               </View>
               <View style={styles.summaryDivider} />
 
               <View style={styles.summaryFooter}>
-                <View>
-                  <Text style={styles.totalLabel}>Amount (excl. delivery)</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.totalLabel}>Items Total</Text>
                   <Text style={styles.totalValue}>₹{checkoutTotal.toFixed(0)}</Text>
+                  <Text style={styles.deliveryFeeNote}>
+                    Final amount (incl. delivery) shown after order is placed
+                  </Text>
                 </View>
               </View>
             </View>
@@ -795,6 +796,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '800',
     color: colors.onSurface
+},
+  deliveryFeeNote: {
+    fontSize: 11,
+    color: colors.outline,
+    marginTop: 6,
+    lineHeight: 16,
 },
   savingsContainer: {
     alignItems: 'flex-end'

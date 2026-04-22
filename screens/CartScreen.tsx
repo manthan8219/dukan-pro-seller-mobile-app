@@ -82,10 +82,6 @@ interface CartScreenProps {
 export default function CartScreen({ navigation }: CartScreenProps) {
   const { cartItemsList, cartCount, cartTotal, updateCart } = useCart();
 
-  const DELIVERY_FEE = 50;
-  const TAX_RATE = 0.05;
-  const tax = cartTotal * TAX_RATE;
-  const total = cartTotal + DELIVERY_FEE + tax;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -160,21 +156,9 @@ export default function CartScreen({ navigation }: CartScreenProps) {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(400).delay(700)} style={styles.priceBreakdown}>
-          <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>Subtotal</Text>
-            <Text style={styles.priceValue}>₹{cartTotal.toFixed(0)}</Text>
-          </View>
-          <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>Delivery Fee</Text>
-            <Text style={styles.priceValue}>₹{DELIVERY_FEE.toFixed(0)}</Text>
-          </View>
-          <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>Tax (5%)</Text>
-            <Text style={styles.priceValueTax}>₹{tax.toFixed(0)}</Text>
-          </View>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>₹{total.toFixed(0)}</Text>
+            <Text style={styles.totalValue}>₹{cartTotal.toFixed(0)}</Text>
           </View>
         </Animated.View>
 

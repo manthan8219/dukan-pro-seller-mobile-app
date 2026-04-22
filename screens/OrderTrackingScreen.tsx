@@ -1,559 +1,350 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  Image, 
-  TouchableOpacity, 
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   ScrollView,
-  Alert
+  ActivityIndicator,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withRepeat, 
-  withTiming, 
-  Easing,
-  FadeInUp
-} from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { getOrders, type OrderResponse } from '../services/OrderService';
+
+const colors = {
+  primary: '#006670',
+  surface: '#f9f9ff',
+  surfaceContainerLowest: '#ffffff',
+  surfaceContainerLow: '#f1f3fe',
+  onSurface: '#181c23',
+  onSurfaceVariant: '#414754',
+  outline: '#717786',
+  outlineVariant: '#c1c6d7',
+};
+
+type StatusStep = {
+  key: string;
+  label: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
+  description: string;
+};
+
+const STATUS_STEPS: StatusStep[] = [
+  { key: 'PLACED',           label: 'Order Placed',       icon: 'check-circle-outline', description: 'Your order has been received by the shop.' },
+  { key: 'CONFIRMED',        label: 'Confirmed',          icon: 'thumb-up-alt',         description: 'The shop has confirmed your order.' },
+  { key: 'PROCESSING',       label: 'Being Prepared',     icon: 'inventory',            description: 'Your items are being packed.' },
+  { key: 'OUT_FOR_DELIVERY', label: 'Out for Delivery',   icon: 'local-shipping',       description: 'Your order is on its way.' },
+  { key: 'DELIVERED',        label: 'Delivered',          icon: 'check-circle',         description: 'Your order has been delivered.' },
+];
+
+const CANCELLED_STEP: StatusStep = {
+  key: 'CANCELLED',
+  label: 'Cancelled',
+  icon: 'cancel',
+  description: 'This order was cancelled.',
+};
+
+function currentStepIndex(status: string): number {
+  return STATUS_STEPS.findIndex((s) => s.key === status);
+}
 
 interface Props {
   navigation?: any;
+  route?: any;
 }
 
-export default function OrderTrackingScreen({ navigation }: Props) {
-  const pingScale = useSharedValue(1);
-  const pingOpacity = useSharedValue(0.5);
+export default function OrderTrackingScreen({ navigation, route }: Props) {
+  const orderId: string | undefined = route?.params?.orderId;
+
+  const [order, setOrder] = useState<OrderResponse | null>(null);
+  const [loading, setLoading] = useState(!!orderId);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    pingScale.value = withRepeat(
-      withTiming(2.5, { duration: 1500, easing: Easing.out(Easing.ease) }),
-      -1,
-      false
-    );
-    pingOpacity.value = withRepeat(
-      withTiming(0, { duration: 1500, easing: Easing.out(Easing.ease) }),
-      -1,
-      false
-    );
-  }, []);
+    if (!orderId) return;
+    getOrders()
+      .then((orders) => {
+        const found = orders.find((o) => o.id === orderId) ?? orders[0] ?? null;
+        setOrder(found);
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : 'Could not load order'))
+      .finally(() => setLoading(false));
+  }, [orderId]);
 
-  const pingStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pingScale.value }],
-    opacity: pingOpacity.value
-}));
+  const isCancelled = order?.status === 'CANCELLED';
+  const activeIndex = order ? currentStepIndex(order.status) : -1;
+  const steps = isCancelled ? [] : STATUS_STEPS;
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Header (Absolute Positioned over ScrollView) */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <TouchableOpacity 
-              style={[styles.headerButton, { marginRight: 8 }]} 
-              onPress={() => navigation?.goBack()}
-              activeOpacity={0.7}
-            >
-              <MaterialIcons name="arrow-back" size={24} color="#006670" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Track Order</Text>
-          </View>
-          <TouchableOpacity style={styles.headerButton} activeOpacity={0.7} onPress={() => navigation.navigate('Cart')}>
-            <MaterialIcons name="shopping-basket" size={24} color="#006670" />
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView 
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Map Section */}
-          <View style={styles.mapSection}>
-            <Image 
-              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBVd7V-Ba0vVvicFvaopZwbI0NzdGJ5ssFx0K6e0Ui4uIMK8zUOIWtPQRDVqZSwdYFLSF91Ohn-vckAudOy9NzC7PbgYD-hP_S9QNAqP2d8P0G5J8J7b_NC8iD8SdzmMSk93pkiwH3IDoIymB-1nmNgp4tUmzKrxsvhrCnPbKkixAIC9gwg0t9OYQUADuEMXMU_fTJwc8aXSNoeplI-dir1EqZ6ETzkdac3fa91-UoWxd6L-GmMkVqhghkf2qhX4zgU3fKZ4Akdy9Nh' }} 
-              style={styles.mapImage}
-            />
-            <LinearGradient
-              colors={['rgba(249, 249, 255, 0.8)', 'rgba(249, 249, 255, 0)', 'rgba(249, 249, 255, 0)', 'rgba(249, 249, 255, 1)']}
-              locations={[0, 0.2, 0.8, 1]}
-              style={StyleSheet.absoluteFillObject}
-            />
-            
-            {/* Delivery Pin */}
-            <View style={styles.pinContainer}>
-              <Animated.View style={[styles.pinPing, pingStyle]} />
-              <View style={styles.pinCore}>
-                <MaterialIcons name="electric-scooter" size={20} color="#ffffff" />
-              </View>
-            </View>
-          </View>
-
-          {/* Contextual Content Overlay */}
-          <View style={styles.contentOverlay}>
-            {/* ETA Card */}
-            <Animated.View entering={FadeInUp.delay(100).springify()} style={styles.etaCard}>
-              <View>
-                <Text style={styles.etaLabel}>ESTIMATED ARRIVAL</Text>
-                <Text style={styles.etaTime}>12:45 PM</Text>
-              </View>
-              <View style={styles.etaBadge}>
-                <Text style={styles.etaBadgeText}>12 mins</Text>
-              </View>
-            </Animated.View>
-
-            {/* Courier Card */}
-            <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.courierCard}>
-              <Image 
-                source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC7iJfpLztC2Fc5qpOVw4IViJuLHAV6ZyMQjkReMCOz7GB2jVz-19pzmLHTZbTdiGAzatahJLhkfV-v-T-xD5yTfKe3TccuJQasdAo0XMR94zYz4kM9TtNrJlyXbudmHrFTiAhIvkBllQLzRDt1kiFj6c8A4eXD4UAasMo22YZQBghlVFglvyrbzBOtwJFPjc6DkLVtys5yvtYrbMJtvezzatBhFpNf40Y0iGhskLOpwL12qw0UYypFlUSgIO6B6Fp4E-fzd23-LoF6' }}
-                style={styles.courierImage}
-              />
-              <View style={styles.courierInfo}>
-                <Text style={styles.courierName}>Marcus Thompson</Text>
-                <Text style={styles.courierRole}>Your Delivery Partner</Text>
-              </View>
-              <TouchableOpacity style={styles.callButton} activeOpacity={0.7} onPress={() => {}}>
-                <MaterialIcons name="call" size={24} color="#613400" />
-              </TouchableOpacity>
-            </Animated.View>
-
-            {/* Order Progress */}
-            <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.progressSection}>
-              <Text style={styles.progressTitle}>Order Progress</Text>
-              <View style={styles.timeline}>
-
-                {/* Step 1 */}
-                <View style={styles.timelineStep}>
-                  <View style={styles.stepDotCompleted}>
-                    <MaterialIcons name="check" size={14} color="#ffffff" />
-                  </View>
-                  <View style={styles.stepContent}>
-                    <Text style={styles.stepTitle}>Order Placed</Text>
-                    <Text style={styles.stepDescription}>We've received your order at 12:10 PM</Text>
-                  </View>
-                </View>
-
-                {/* Step 2 */}
-                <View style={styles.timelineStep}>
-                  <View style={styles.stepDotCompleted}>
-                    <MaterialIcons name="check" size={14} color="#ffffff" />
-                  </View>
-                  <View style={styles.stepContent}>
-                    <Text style={styles.stepTitle}>Packing</Text>
-                    <Text style={styles.stepDescription}>Curating your items with care</Text>
-                  </View>
-                </View>
-
-                {/* Step 3 */}
-                <View style={styles.timelineStep}>
-                  <View style={styles.stepDotActive}>
-                    <View style={styles.stepDotActiveInner} />
-                  </View>
-                  <View style={styles.stepContent}>
-                    <Text style={styles.stepTitleActive}>Out for Delivery</Text>
-                    <Text style={styles.stepDescription}>Marcus is on his way to your location</Text>
-                  </View>
-                </View>
-
-                {/* Step 4 */}
-                <View style={[styles.timelineStep, { marginBottom: 0 }]}>
-                  <View style={styles.stepDotInactive} />
-                  <View style={[styles.stepContent, { opacity: 0.4 }]}>
-                    <Text style={styles.stepTitle}>Delivered</Text>
-                    <Text style={styles.stepDescription}>Enjoy your fresh groceries!</Text>
-                  </View>
-                </View>
-              </View>
-            </Animated.View>
-
-            {/* Summary Card */}
-            <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.summaryCard}>
-              <View style={styles.summaryHeader}>
-                <View>
-                  <Text style={styles.summaryOrderId}>ORDER #GC-8829</Text>
-                  <Text style={styles.summaryTitle}>Premium Weekly Haul</Text>
-                </View>
-                <Text style={styles.summaryPrice}>$42.50</Text>
-              </View>
-              <View style={styles.summaryImagesRow}>
-                <Image style={styles.summaryImage} source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOvbhsVVjG-on3bfwvWHblU0_FROEABOAbM3RMqzXpmHY8c0ieuuJbuGuXXdX9xMHMp8DNhdykqrsdsMrb09EGdStgACev9S3MmEzzIGNdVnhVqAYLJ9Vlby2NJU6zX5OzmPPQ8OvGoDqg37A_CIdBYti-TM-4feHBP0TvSHVT7lk3ZUj02Av44GpdyQ0hfD6SHSNgC3UoMJQt0QpfC_cvWnRx_fCAhMvpcJt1E2lPCQ7MQmtbV6ie6BzOPPLqJ85A9bA8OtCdTnb0' }} />
-                <Image style={styles.summaryImage} source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBHjsVAUk0rfxK9hwf_lmR4dWxM8vzTltyBJrOBYqNrl6e-LRjWg4c8gW_dZZGLaTeTcpq1N3xx7yIp2eEQ1OtwK2EabhniiyHtcL3_Ok1LvIlpIwvhXUqeGl921-JP5ub3MXV6FRqJkQeCT7L3z6P5I4-493q5IUDV3IvGCXkdhszLoyPubtHT4gR6psvTATiU6EHKjWMAOf-mENfrAcxvNBvAozzB5wj4iX_WIwpUDXPBFujwZKvujExAYeW-zR9KgdDq-jPO0l4W' }} />
-                <Image style={styles.summaryImage} source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD03DFCOjzIaM19tTnao-eGUxbeFWziixA5n6irBD4ou_-2ugqY8s8tl9K1HAiUhRsMbifiIVTBT2au2aN_CAOuEcYeWEpW_hHUzol8xvjKPkljiLRsIbnXZzDXOdMfh72VSNVtqncDTS25EWIuXPhtdiXS9iOqPOl_tPPI3qGkJLYxvw0nM_zC5fLDoLir3CPLW2eF1LBIey62ClDeTa7Kh_jBVOFAj_irWRVC2q4Vps5QgrMt31v5s_fr5U37yi7SCcssNeUlEvhn' }} />
-                <View style={styles.summaryMoreImages}>
-                  <Text style={styles.summaryMoreImagesText}>+4</Text>
-                </View>
-              </View>
-            </Animated.View>
-          </View>
-        </ScrollView>
-
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.liveTrackButton} activeOpacity={0.8} onPress={() => navigation.navigate('Main', { screen: 'Home' })}>
-            <MaterialIcons name="home" size={20} color="#ffffff" style={{ marginRight: 8 }} />
-            <Text style={styles.liveTrackButtonText}>Back to Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.helpButton} activeOpacity={0.8} onPress={() => navigation.navigate('HelpSupport')}>
-            <MaterialIcons name="help-outline" size={24} color="#181c23" />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.headerButton} onPress={() => navigation?.goBack()} activeOpacity={0.7}>
+          <MaterialIcons name="arrow-back" size={24} color={colors.primary} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Order Status</Text>
+        <View style={{ width: 40 }} />
       </View>
+
+      {loading ? (
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : error ? (
+        <View style={styles.centered}>
+          <MaterialIcons name="wifi-off" size={48} color={colors.outlineVariant} />
+          <Text style={styles.errorTitle}>Could not load order</Text>
+          <Text style={styles.errorSub}>{error}</Text>
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+
+          {/* Success / Cancelled banner */}
+          <Animated.View entering={FadeInDown.duration(400)} style={[styles.banner, isCancelled ? styles.bannerCancelled : styles.bannerSuccess]}>
+            <MaterialIcons
+              name={isCancelled ? 'cancel' : order?.status === 'DELIVERED' ? 'check-circle' : 'shopping-bag'}
+              size={40}
+              color={isCancelled ? '#991b1b' : colors.primary}
+            />
+            <Text style={[styles.bannerTitle, isCancelled && { color: '#991b1b' }]}>
+              {isCancelled ? 'Order Cancelled' : order?.status === 'DELIVERED' ? 'Order Delivered!' : 'Order Placed!'}
+            </Text>
+            {order && (
+              <Text style={styles.bannerSub}>
+                {isCancelled
+                  ? 'This order was cancelled.'
+                  : order.status === 'DELIVERED'
+                  ? 'Your items have been delivered.'
+                  : 'We\'ll keep you updated as it progresses.'}
+              </Text>
+            )}
+            {!order && (
+              <Text style={styles.bannerSub}>Your order was successfully placed.</Text>
+            )}
+          </Animated.View>
+
+          {/* Order summary row */}
+          {order && (
+            <Animated.View entering={FadeInDown.duration(400).delay(100)} style={styles.summaryCard}>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Shop</Text>
+                <Text style={styles.summaryValue} numberOfLines={1}>{order.shopDisplayName ?? '—'}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Items</Text>
+                <Text style={styles.summaryValue}>{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Total</Text>
+                <Text style={[styles.summaryValue, { color: colors.primary, fontWeight: '700' }]}>
+                  ₹{(order.totalMinor / 100).toFixed(0)}
+                </Text>
+              </View>
+              {order.paymentMethod && (
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Payment</Text>
+                  <Text style={styles.summaryValue}>{order.paymentMethod.toUpperCase()}</Text>
+                </View>
+              )}
+              <View style={[styles.summaryRow, { borderBottomWidth: 0 }]}>
+                <Text style={styles.summaryLabel}>Placed</Text>
+                <Text style={styles.summaryValue}>
+                  {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </Text>
+              </View>
+            </Animated.View>
+          )}
+
+          {/* Status timeline */}
+          {isCancelled ? (
+            <Animated.View entering={FadeInDown.duration(400).delay(200)} style={styles.timelineCard}>
+              <Text style={styles.timelineTitle}>Order Status</Text>
+              <View style={styles.step}>
+                <View style={[styles.stepDot, { backgroundColor: '#fee2e2' }]}>
+                  <MaterialIcons name="cancel" size={18} color="#991b1b" />
+                </View>
+                <View style={styles.stepBody}>
+                  <Text style={[styles.stepLabel, { color: '#991b1b' }]}>Cancelled</Text>
+                  <Text style={styles.stepDesc}>This order was cancelled.</Text>
+                </View>
+              </View>
+            </Animated.View>
+          ) : steps.length > 0 && (
+            <Animated.View entering={FadeInDown.duration(400).delay(200)} style={styles.timelineCard}>
+              <Text style={styles.timelineTitle}>Order Progress</Text>
+              {steps.map((step, idx) => {
+                const done = activeIndex >= idx;
+                const active = activeIndex === idx;
+                return (
+                  <View key={step.key} style={styles.stepRow}>
+                    {/* Connector line above (skip first) */}
+                    <View style={styles.stepLeft}>
+                      {idx > 0 && (
+                        <View style={[styles.connector, done && styles.connectorDone]} />
+                      )}
+                      <View style={[styles.stepDot, done ? styles.stepDotDone : styles.stepDotPending, active && styles.stepDotActive]}>
+                        <MaterialIcons
+                          name={done ? 'check' : step.icon}
+                          size={16}
+                          color={done ? '#ffffff' : colors.outlineVariant}
+                        />
+                      </View>
+                    </View>
+                    <View style={[styles.stepBody, idx < steps.length - 1 && { marginBottom: 8 }]}>
+                      <Text style={[styles.stepLabel, !done && styles.stepLabelPending, active && { color: colors.primary }]}>
+                        {step.label}
+                      </Text>
+                      {(done || active) && (
+                        <Text style={styles.stepDesc}>{step.description}</Text>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
+            </Animated.View>
+          )}
+
+          {/* Item list */}
+          {order && order.items.length > 0 && (
+            <Animated.View entering={FadeInDown.duration(400).delay(300)} style={styles.itemsCard}>
+              <Text style={styles.timelineTitle}>Items Ordered</Text>
+              {order.items.map((item) => (
+                <View key={item.id} style={styles.itemRow}>
+                  <Text style={styles.itemName} numberOfLines={2}>{item.productNameSnapshot}</Text>
+                  <View style={styles.itemRight}>
+                    <Text style={styles.itemQty}>×{item.quantity}</Text>
+                    <Text style={styles.itemPrice}>₹{(item.lineTotalMinor / 100).toFixed(0)}</Text>
+                  </View>
+                </View>
+              ))}
+            </Animated.View>
+          )}
+
+          <TouchableOpacity
+            style={styles.homeButton}
+            onPress={() => navigation?.navigate('Main', { screen: 'Home' })}
+            activeOpacity={0.8}
+          >
+            <MaterialIcons name="home" size={20} color="#ffffff" />
+            <Text style={styles.homeButtonText}>Back to Home</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#f9f9ff'
-},
-  container: {
-    flex: 1,
-    backgroundColor: '#f9f9ff'
-},
+  safeArea: { flex: 1, backgroundColor: colors.surface },
   header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 64,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    backgroundColor: 'rgba(249, 249, 255, 0.8)',
-    zIndex: 50
-},
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center'
-},
-  headerButton: {
-    padding: 4
-},
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#006670',
-    letterSpacing: -0.5
-},
-  scrollView: {
-    flex: 1
-},
-  scrollContent: {
-    paddingTop: 64,
-    paddingBottom: 120
-},
-  mapSection: {
-    height: 397,
-    width: '100%',
-    position: 'relative',
-    overflow: 'hidden'
-},
-  mapImage: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute'
-},
-  pinContainer: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginLeft: -24,
-    marginTop: -24,
-    width: 48,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 20
-},
-  pinPing: {
-    position: 'absolute',
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(0, 102, 112, 0.2)'
-},
-  pinCore: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#006670',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 8
-},
-  contentOverlay: {
-    paddingHorizontal: 24,
-    marginTop: -64,
-    position: 'relative',
-    zIndex: 30
-},
-  etaCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-    shadowColor: '#181c23',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.06,
-    shadowRadius: 32,
-    elevation: 4
-},
-  etaLabel: {
-    fontSize: 12,
-    color: '#414754',
-    fontWeight: '500',
-    letterSpacing: 0.5,
-    marginBottom: 4
-},
-  etaTime: {
-    fontSize: 30,
-    fontWeight: '800',
-    color: '#006670',
-    letterSpacing: -0.5
-},
-  etaBadge: {
-    backgroundColor: 'rgba(0, 129, 141, 0.1)',
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 999
-},
-  etaBadgeText: {
-    color: '#006670',
-    fontWeight: '700',
-    fontSize: 18
-},
-  courierCard: {
-    backgroundColor: '#f1f3fe',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 32,
-    flexDirection: 'row',
+    height: 64,
+    backgroundColor: colors.surfaceContainerLowest,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.outlineVariant + '30',
+  },
+  headerButton: { padding: 8 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.onSurface },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 32 },
+  errorTitle: { fontSize: 18, fontWeight: '700', color: colors.onSurface },
+  errorSub: { fontSize: 14, color: colors.outline, textAlign: 'center' },
+  content: { padding: 20, gap: 16 },
+
+  banner: {
+    borderRadius: 16,
+    padding: 28,
     alignItems: 'center',
+    gap: 10,
+  },
+  bannerSuccess: { backgroundColor: '#e0f2f1' },
+  bannerCancelled: { backgroundColor: '#fee2e2' },
+  bannerTitle: { fontSize: 22, fontWeight: '800', color: colors.primary, letterSpacing: -0.5 },
+  bannerSub: { fontSize: 14, color: colors.onSurfaceVariant, textAlign: 'center' },
+
+  summaryCard: {
+    backgroundColor: colors.surfaceContainerLowest,
+    borderRadius: 16,
+    paddingHorizontal: 20,
     borderWidth: 1,
-    borderColor: 'rgba(193, 198, 215, 0.15)'
-},
-  courierImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 28
-},
-  courierInfo: {
-    flex: 1,
-    marginLeft: 16
-},
-  courierName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#181c23',
-    marginBottom: 2
-},
-  courierRole: {
-    fontSize: 14,
-    color: '#414754'
-},
-  callButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#fd9000',
+    borderColor: colors.outlineVariant + '30',
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surfaceContainerLow,
+  },
+  summaryLabel: { fontSize: 14, color: colors.onSurfaceVariant },
+  summaryValue: { fontSize: 14, color: colors.onSurface, maxWidth: '60%', textAlign: 'right' },
+
+  timelineCard: {
+    backgroundColor: colors.surfaceContainerLowest,
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: colors.outlineVariant + '30',
+  },
+  timelineTitle: { fontSize: 16, fontWeight: '700', color: colors.onSurface, marginBottom: 20 },
+
+  stepRow: { flexDirection: 'row', gap: 16 },
+  stepLeft: { alignItems: 'center', width: 32 },
+  connector: {
+    width: 2,
+    height: 16,
+    backgroundColor: colors.outlineVariant,
+    marginBottom: 4,
+  },
+  connectorDone: { backgroundColor: colors.primary },
+  stepDot: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-},
-  progressSection: {
-    marginBottom: 48
-},
-  progressTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#181c23',
-    marginBottom: 24,
-    paddingHorizontal: 4
-},
-  timeline: {
-    marginLeft: 16,
-    paddingLeft: 32,
-    position: 'relative',
-    borderLeftWidth: 2,
-    borderLeftColor: 'rgba(193, 198, 215, 0.3)'
-},
-  timelineStep: {
-    position: 'relative',
-    marginBottom: 40
-},
-  stepDotCompleted: {
-    position: 'absolute',
-    left: -43,
-    top: -2,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#006670',
-    borderWidth: 4,
-    borderColor: 'rgba(0, 102, 112, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center'
-},
-  stepDotActive: {
-    position: 'absolute',
-    left: -43,
-    top: -2,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#00818d',
-    borderWidth: 4,
-    borderColor: 'rgba(0, 129, 141, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center'
-},
-  stepDotActiveInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#f6feff'
-},
-  stepDotInactive: {
-    position: 'absolute',
-    left: -43,
-    top: -2,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#e0e2ed',
-    borderWidth: 4,
-    borderColor: 'rgba(224, 226, 237, 0.5)'
-},
-  stepContent: {
-    marginLeft: 0
-},
-  stepTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#181c23',
-    marginBottom: 4
-},
-  stepTitleActive: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#006670',
-    marginBottom: 4
-},
-  stepDescription: {
-    fontSize: 14,
-    color: '#414754'
-},
-  summaryCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 24,
+    marginBottom: 4,
+  },
+  stepDotDone: { backgroundColor: colors.primary },
+  stepDotActive: { backgroundColor: '#00818d' },
+  stepDotPending: { backgroundColor: colors.surfaceContainerLow, borderWidth: 1, borderColor: colors.outlineVariant },
+  step: { flexDirection: 'row', gap: 16, alignItems: 'flex-start' },
+  stepBody: { flex: 1, paddingBottom: 12 },
+  stepLabel: { fontSize: 15, fontWeight: '700', color: colors.onSurface, marginBottom: 2 },
+  stepLabelPending: { color: colors.outline, fontWeight: '500' },
+  stepDesc: { fontSize: 13, color: colors.onSurfaceVariant },
+
+  itemsCard: {
+    backgroundColor: colors.surfaceContainerLowest,
+    borderRadius: 16,
+    padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(193, 198, 215, 0.15)'
-},
-  summaryHeader: {
+    borderColor: colors.outlineVariant + '30',
+  },
+  itemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 16
-},
-  summaryOrderId: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#946f00',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    marginBottom: 4
-},
-  summaryTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#181c23'
-},
-  summaryPrice: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#006670'
-},
-  summaryImagesRow: {
-    flexDirection: 'row'
-},
-  summaryImage: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: '#f1f3fe',
-    marginRight: 8
-},
-  summaryMoreImages: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: '#e0e2ed',
-    alignItems: 'center',
-    justifyContent: 'center'
-},
-  summaryMoreImagesText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#414754'
-},
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(249, 249, 255, 0.8)',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(193, 198, 215, 0.15)',
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 24,
-    flexDirection: 'row',
-    zIndex: 50
-},
-  liveTrackButton: {
-    flex: 1,
-    backgroundColor: '#006670',
-    borderRadius: 999,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surfaceContainerLow,
+  },
+  itemName: { fontSize: 14, color: colors.onSurface, flex: 1, marginRight: 12 },
+  itemRight: { alignItems: 'flex-end', gap: 2 },
+  itemQty: { fontSize: 12, color: colors.outline },
+  itemPrice: { fontSize: 14, fontWeight: '700', color: colors.primary },
+
+  homeButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 32,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
-    marginRight: 16
-},
-  liveTrackButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700'
-},
-  helpButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#e0e2ed',
-    alignItems: 'center',
-    justifyContent: 'center'
-}
+    gap: 10,
+    marginTop: 8,
+  },
+  homeButtonText: { color: '#ffffff', fontSize: 16, fontWeight: '700' },
 });

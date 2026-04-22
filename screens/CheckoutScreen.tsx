@@ -123,8 +123,7 @@ export default function CheckoutScreen({ navigation }: any) {
   const [selectedPayment, setSelectedPayment] = useState('upi');
   const [placing, setPlacing] = useState(false);
 
-  const PACKAGING_FEE = 20;
-  const checkoutTotal = cartTotal + PACKAGING_FEE;
+  const checkoutTotal = cartTotal;
 
   const paymentMethodMap: Record<string, PaymentMethod> = {
     upi: 'upi',
@@ -143,12 +142,12 @@ export default function CheckoutScreen({ navigation }: any) {
     }
     setPlacing(true);
     try {
-      await placeOrder({
+      const orders = await placeOrder({
         deliveryAddressId: selectedAddressId,
         paymentMethod: paymentMethodMap[selectedPayment] ?? 'upi',
         items: cartItemsList.map((e) => ({ shopProductId: e.product.id, quantity: e.quantity })),
       });
-      navigation.navigate('OrderTracking');
+      navigation.navigate('OrderTracking', { orderId: orders[0]?.id });
     } catch (err) {
       Alert.alert('Order Failed', err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
@@ -379,20 +378,6 @@ export default function CheckoutScreen({ navigation }: any) {
                 <Text style={styles.summaryLabel}>Items Subtotal ({cartCount})</Text>
                 <Text style={styles.summaryValue}>₹{cartTotal.toFixed(0)}</Text>
               </View>
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Delivery Fee</Text>
-                <Text style={[styles.summaryValue, { color: colors.primary }]}>
-                  FREE
-                </Text>
-              </View>
-              <View style={styles.summaryRow}>
-                <View style={styles.summaryLabelWithIcon}>
-                  <Text style={styles.summaryLabel}>Packaging Charges</Text>
-                  <MaterialIcons name="info" size={14} color={colors.outline} />
-                </View>
-                <Text style={styles.summaryValue}>₹{PACKAGING_FEE}.00</Text>
-              </View>
-
               <View style={styles.summaryDivider} />
 
               <View style={styles.summaryFooter}>

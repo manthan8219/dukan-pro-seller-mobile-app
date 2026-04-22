@@ -269,7 +269,7 @@ export default function GroceryHomeScreen({ navigation }: any) {
                   key={shop.id}
                   index={index}
                   shop={shop}
-                  onPress={() => navigation.navigate(shop.screenTarget, { shopId: shop.id, shopName: shop.name })}
+                  onPress={() => navigation.navigate(shop.screenTarget, { shopId: shop.id, shopName: shop.name, shopRating: shop.rating })}
                 />
               ))
             )}

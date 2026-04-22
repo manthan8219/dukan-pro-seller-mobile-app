@@ -155,7 +155,7 @@ const ProductCard = ({
 
 // ─── Screen ────────────────────────────────────────────────────────────────
 export default function ShopDetailScreen({ navigation, route }: any) {
-  const { shopId, shopName } = (route?.params ?? {}) as { shopId?: string; shopName?: string };
+  const { shopId, shopName, shopRating } = (route?.params ?? {}) as { shopId?: string; shopName?: string; shopRating?: string };
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -240,7 +240,7 @@ export default function ShopDetailScreen({ navigation, route }: any) {
                   <View style={styles.heroStats}>
                     <View style={styles.ratingBadge}>
                       <MaterialIcons name="star" size={13} color={colors.onSecondaryContainer} />
-                      <Text style={styles.ratingText}>4.9</Text>
+                      <Text style={styles.ratingText}>{shopRating ?? 'N/A'}</Text>
                     </View>
                     <View style={styles.timeBadge}>
                       <MaterialIcons name="schedule" size={13} color={colors.onSurfaceVariant} />

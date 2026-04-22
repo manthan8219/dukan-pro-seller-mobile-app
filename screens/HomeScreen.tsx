@@ -329,7 +329,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
                   distance={shop.distance}
                   rating={shop.rating}
                   tags={shop.tags}
-                  onPress={() => navigation.navigate(shop.screenTarget, { shopId: shop.id, shopName: shop.name })}
+                  onPress={() => navigation.navigate(shop.screenTarget, { shopId: shop.id, shopName: shop.name, shopRating: shop.rating })}
                 />
               ))
             )}

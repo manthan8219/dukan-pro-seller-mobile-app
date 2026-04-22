@@ -226,7 +226,10 @@ export default function ProfileScreen({ navigation }: any) {
                       </View>
                     </View>
                     <View style={styles.orderCardRight}>
-                      <Text style={styles.orderAmount}>₹{(order.totalMinor / 100).toFixed(0)}</Text>
+                      <Text style={styles.orderAmount}>₹{(order.itemsSubtotalMinor / 100).toFixed(0)}</Text>
+                      {order.deliveryFeeMinor > 0 && (
+                        <Text style={styles.orderDeliveryFee}>+₹{(order.deliveryFeeMinor / 100).toFixed(0)} delivery</Text>
+                      )}
                       <View style={[styles.orderStatusDot, {
                         backgroundColor:
                           order.status === 'DELIVERED' ? '#10b981' :
@@ -516,6 +519,7 @@ const styles = StyleSheet.create({
   orderMeta: { fontSize: 12, color: COLORS.slate500, marginTop: 2 },
   orderCardRight: { alignItems: 'flex-end', gap: 6 },
   orderAmount: { fontSize: 14, fontWeight: '700', color: COLORS.teal700 },
+  orderDeliveryFee: { fontSize: 11, color: COLORS.slate500 },
   orderStatusDot: { width: 8, height: 8, borderRadius: 4 },
   ordersPlaceholder: {
     backgroundColor: COLORS.surfaceContainerLowest,

@@ -135,6 +135,16 @@ export default function OrderTrackingScreen({ navigation, route }: Props) {
                 <Text style={styles.summaryValue}>{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</Text>
               </View>
               <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Items Subtotal</Text>
+                <Text style={styles.summaryValue}>₹{(order.itemsSubtotalMinor / 100).toFixed(0)}</Text>
+              </View>
+              {order.deliveryFeeMinor > 0 && (
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Delivery Fee</Text>
+                  <Text style={styles.summaryValue}>₹{(order.deliveryFeeMinor / 100).toFixed(0)}</Text>
+                </View>
+              )}
+              <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Total</Text>
                 <Text style={[styles.summaryValue, { color: colors.primary, fontWeight: '700' }]}>
                   ₹{(order.totalMinor / 100).toFixed(0)}

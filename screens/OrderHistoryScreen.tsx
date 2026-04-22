@@ -88,7 +88,7 @@ export default function OrderHistoryScreen({ navigation }: any) {
                         {formatDate(order.createdAt)} · {itemCount} {itemCount === 1 ? 'item' : 'items'}
                       </Text>
                     </View>
-                    <Text style={styles.orderAmount}>{formatAmount(order.totalMinor)}</Text>
+                    <Text style={styles.orderAmount}>{formatAmount(order.itemsSubtotalMinor)}</Text>
                   </View>
 
                   {/* Item snapshots */}
@@ -98,6 +98,24 @@ export default function OrderHistoryScreen({ navigation }: any) {
                         · {item.productNameSnapshot} × {item.quantity}
                       </Text>
                     ))}
+                  </View>
+
+                  {/* Price breakdown */}
+                  <View style={styles.priceBreakdown}>
+                    <View style={styles.priceRow}>
+                      <Text style={styles.priceLabel}>Items</Text>
+                      <Text style={styles.priceValue}>{formatAmount(order.itemsSubtotalMinor)}</Text>
+                    </View>
+                    {order.deliveryFeeMinor > 0 && (
+                      <View style={styles.priceRow}>
+                        <Text style={styles.priceLabel}>Delivery fee</Text>
+                        <Text style={styles.priceValue}>{formatAmount(order.deliveryFeeMinor)}</Text>
+                      </View>
+                    )}
+                    <View style={[styles.priceRow, styles.priceTotalRow]}>
+                      <Text style={styles.priceTotalLabel}>Total</Text>
+                      <Text style={styles.priceTotalValue}>{formatAmount(order.totalMinor)}</Text>
+                    </View>
                   </View>
 
                   <View style={styles.orderBottom}>
@@ -168,6 +186,19 @@ const styles = StyleSheet.create({
   orderAmount: { fontSize: 16, fontWeight: '700', color: '#0f766e' },
   itemsList: { marginBottom: 12 },
   itemLine: { fontSize: 13, color: '#64748b', lineHeight: 20 },
+  priceBreakdown: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    gap: 6,
+  },
+  priceRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  priceLabel: { fontSize: 13, color: '#64748b' },
+  priceValue: { fontSize: 13, color: '#334155', fontWeight: '500' },
+  priceTotalRow: { borderTopWidth: 1, borderTopColor: '#e2e8f0', paddingTop: 6, marginTop: 2 },
+  priceTotalLabel: { fontSize: 13, fontWeight: '700', color: '#0f172a' },
+  priceTotalValue: { fontSize: 13, fontWeight: '700', color: '#0f766e' },
   orderBottom: {
     flexDirection: 'row',
     justifyContent: 'space-between',

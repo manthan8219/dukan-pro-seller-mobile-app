@@ -379,11 +379,17 @@ export default function CheckoutScreen({ navigation }: any) {
                 <Text style={styles.summaryLabel}>Items Subtotal ({cartCount})</Text>
                 <Text style={styles.summaryValue}>₹{cartTotal.toFixed(0)}</Text>
               </View>
+              <View style={styles.summaryRow}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Text style={styles.summaryLabel}>Delivery Fee</Text>
+                </View>
+                <Text style={styles.summaryValue}>Calculated by shop</Text>
+              </View>
               <View style={styles.summaryDivider} />
 
               <View style={styles.summaryFooter}>
                 <View>
-                  <Text style={styles.totalLabel}>Total Amount</Text>
+                  <Text style={styles.totalLabel}>Amount (excl. delivery)</Text>
                   <Text style={styles.totalValue}>₹{checkoutTotal.toFixed(0)}</Text>
                 </View>
               </View>

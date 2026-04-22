@@ -157,8 +157,12 @@ export default function CartScreen({ navigation }: CartScreenProps) {
 
         <Animated.View entering={FadeInDown.duration(400).delay(700)} style={styles.priceBreakdown}>
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total</Text>
+            <Text style={styles.totalLabel}>Items Subtotal</Text>
             <Text style={styles.totalValue}>₹{cartTotal.toFixed(0)}</Text>
+          </View>
+          <View style={styles.feeNoteRow}>
+            <MaterialIcons name="info-outline" size={14} color={theme.onSurfaceVariant} />
+            <Text style={styles.feeNoteText}>Delivery fee will be calculated at checkout</Text>
           </View>
         </Animated.View>
 
@@ -422,6 +426,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '800',
     color: theme.primary
+},
+  feeNoteRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 10,
+},
+  feeNoteText: {
+    fontSize: 12,
+    color: theme.onSurfaceVariant,
 },
   checkoutButton: {
     width: '100%',
